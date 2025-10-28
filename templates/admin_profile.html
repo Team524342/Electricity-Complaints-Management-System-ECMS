@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Profile</title>
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"> -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 25%, #ff9ff3 50%, #54a0ff 75%, #5f27cd 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            padding: 50px 40px;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.1) 10px,
+                rgba(255, 255, 255, 0.1) 20px
+            );
+            animation: movePattern 20s linear infinite;
+        }
+
+        @keyframes movePattern {
+            0% { transform: translateX(-50px) translateY(-50px); }
+            100% { transform: translateX(50px) translateY(50px); }
+        }
+
+        .profile-section {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 56px;
+            font-weight: bold;
+            color: white;
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .avatar::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24, #ffd700);
+            z-index: -1;
+            animation: rotate 3s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .avatar:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .profile-info h2 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            margin-left: 15px;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .profile-info p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            margin-bottom: 10px;
+        }
+
+        .status-badges {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .status-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .edit-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 15px 35px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            margin-top: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .edit-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .content {
+            padding: 50px 40px;
+        }
+
+        .sections-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .section.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .section h3 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #ff6b6b;
+        }
+
+        .section h3 i {
+            color: #ff6b6b;
+            font-size: 1.4rem;
+        }
+
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .details-table tr {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            transition: background-color 0.2s ease;
+        }
+
+        .details-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .details-table tr:hover {
+            background-color: rgba(255, 107, 107, 0.05);
+        }
+
+        .details-table td {
+            padding: 18px 20px;
+            vertical-align: top;
+        }
+
+        .details-table td:first-child {
+            font-weight: 600;
+            color: #555;
+            width: 180px;
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        .details-table td:last-child {
+            color: #333;
+            background: white;
+        }
+
+        .permissions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: rgba(255, 107, 107, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .permission-item i {
+            color: #27ae60;
+            font-size: 1.2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-dialog {
+            position: relative;
+            margin: 30px auto;
+            max-width: 600px;
+            animation: modalSlideIn 0.4s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-80px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-close:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-body {
+            padding: 35px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
+            background: white;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-footer {
+            padding: 25px 35px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 20px;
+            }
+
+            .header {
+                padding: 40px 20px;
+            }
+
+            .profile-info h2 {
+                font-size: 2.2rem;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .sections-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .section {
+                padding: 25px 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .permissions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-dialog {
+                margin: 15px;
+            }
+
+            .status-badges {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="profile-section">
+                <div class="avatar">
+                    <span class="initials">Aj</span>
+                </div>
+                <div class="profile-info">
+                    <h2>Alex Johnson </h2>
+                    <p><i class="fas fa-envelope"></i> admin@company.com</p>
+                    <div class="status-badges">
+                        <span class="status-badge"><i class="fas fa-shield-alt"></i> Security Cleared</span>
+                        <span class="status-badge"><i class="fas fa-clock"></i> Online</span>
+                        <span class="status-badge"><i class="fas fa-certificate"></i> Verified</span>
+                    </div>
+                </div>
+                <button class="edit-btn" id="editProfileBtn">
+                    <i class="fas fa-user-edit"></i> Edit Profile
+                </button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="sections-grid">
+                <div class="section">
+                    <h3><i class="fas fa-user-shield"></i> Admin Information</h3>
+                    <table class="details-table">
+                        <tr>
+                            <td><i class="fas fa-user"></i> Full name:</td>
+                            <td id="fullName">Alex Johnson</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-id-badge"></i> Admin ID:</td>
+                            <td id="adminId">ADM-001</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-envelope"></i> Email:</td>
+                            <td id="email">admin@company.com</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-phone"></i> Phone:</td>
+                            <td id="phone">+1 (555) 987-6543</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-calendar"></i> Joined:</td>
+                            <td id="joinDate">January 15, 2022</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-chart-line"></i> Admin Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">247</div>
+                            <div class="stat-label">Users Managed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">52</div>
+                            <div class="stat-label">Active Sessions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">15</div>
+                            <div class="stat-label">Reports Today</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">99.8%</div>
+                            <div class="stat-label">System Uptime</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section full-width">
+                    <h3><i class="fas fa-key"></i> Admin Permissions</h3>
+                    <div class="permissions-grid">
+                        <div class="permission-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>User Management</span>
+                        </div>
+                        <div class="permission-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>System Configuration</span>
+                        </div>
+                        <div class="permission-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Database Access</span>
+                        </div>
+                        <div class="permission-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Security Settings</span>
+                        </div>
+                        <div class="permission-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Report Generation</span>
+                        </div>
+                        <div class="permission-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Backup Management</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section full-width">
+                    <h3><i class="fas fa-map-marker-alt"></i> Contact Information</h3>
+                    <table class="details-table">
+                        <tr>
+                            <td><i class="fas fa-building"></i> Department:</td>
+                            <td id="department">IT Administration</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-map-marker-alt"></i> Office Location:</td>
+                            <td id="office">Building A, Floor 12, Room 1205</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-home"></i> Address:</td>
+                            <td id="address">456 Admin Avenue, Management City, MC 54321</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-phone-alt"></i> Emergency Contact:</td>
+                            <td id="emergencyContact">+1 (555) 911-0000</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-user-edit"></i> Edit Admin Profile</h5>
+                    <button type="button" class="btn-close" id="closeModalBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="editProfileForm">
+                    <div class="modal-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="editEmail" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="editEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editPhone" class="form-label">Phone Number</label>
+                                <input type="text" class="form-control" id="editPhone" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editDepartment" class="form-label">Department</label>
+                                <input type="text" class="form-control" id="editDepartment" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editOffice" class="form-label">Office Location</label>
+                                <input type="text" class="form-control" id="editOffice" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="editAddress" class="form-label">Home Address</label>
+                                <textarea class="form-control" id="editAddress" rows="3" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="editEmergencyContact" class="form-label">Emergency Contact</label>
+                                <input type="text" class="form-control" id="editEmergencyContact" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="currentPassword" class="form-label">Current Password</label>
+                                <input type="password" class="form-control" id="currentPassword" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="newPassword" class="form-label">New Password (leave blank to keep current)</label>
+                                <input type="password" class="form-control" id="newPassword">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="cancelEditBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get elements
+        const editProfileBtn = document.getElementById('editProfileBtn');
+        const editProfileModal = document.getElementById('editProfileModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const editProfileForm = document.getElementById('editProfileForm');
+
+        // Form inputs
+        const editEmail = document.getElementById('editEmail');
+        const editPhone = document.getElementById('editPhone');
+        const editDepartment = document.getElementById('editDepartment');
+        const editOffice = document.getElementById('editOffice');
+        const editAddress = document.getElementById('editAddress');
+        const editEmergencyContact = document.getElementById('editEmergencyContact');
+        const currentPassword = document.getElementById('currentPassword');
+        const newPassword = document.getElementById('newPassword');
+
+        // Profile display elements
+        const emailDisplay = document.getElementById('email');
+        const phoneDisplay = document.getElementById('phone');
+        const departmentDisplay = document.getElementById('department');
+        const officeDisplay = document.getElementById('office');
+        const addressDisplay = document.getElementById('address');
+        const emergencyContactDisplay = document.getElementById('emergencyContact');
+
+        // Show modal function
+        function showModal() {
+            // Pre-fill form with current values
+            editEmail.value = emailDisplay.textContent;
+            editPhone.value = phoneDisplay.textContent;
+            editDepartment.value = departmentDisplay.textContent;
+            editOffice.value = officeDisplay.textContent;
+            editAddress.value = addressDisplay.textContent;
+            editEmergencyContact.value = emergencyContactDisplay.textContent;
+            
+            editProfileModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Hide modal function
+        function hideModal() {
+            editProfileModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            // Clear password fields
+            currentPassword.value = '';
+            newPassword.value = '';
+        }
+
+        // Event listeners
+        editProfileBtn.addEventListener('click', showModal);
+        closeModalBtn.addEventListener('click', hideModal);
+        cancelEditBtn.addEventListener('click', hideModal);
+
+        // Close modal when clicking outside
+        editProfileModal.addEventListener('click', function(e) {
+            if (e.target === editProfileModal) {
+                hideModal();
+            }
+        });
+
+        // Handle form submission
+        editProfileForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simulate form validation
+            if (!currentPassword.value) {
+                showNotification('Please enter your current password to save changes.', 'error');
+                return;
+            }
+
+            // Simulate password verification (in real app, this would be server-side)
+            if (currentPassword.value !== 'admin123') {
+                showNotification('Current password is incorrect.', 'error');
+                return;
+            }
+
+            // Update display values
+            emailDisplay.textContent = editEmail.value;
+            phoneDisplay.textContent = editPhone.value;
+            departmentDisplay.textContent = editDepartment.value;
+            officeDisplay.textContent = editOffice.value;
+            addressDisplay.textContent = editAddress.value;
+            emergencyContactDisplay.textContent = editEmergencyContact.value;
+
+            // Show success message
+            showNotification('Admin profile updated successfully!', 'success');
+            
+            // Hide modal
+            hideModal();
+        });
+
+        // Notification system
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                background: ${type === 'success' ? 'linear-gradient(135deg, #27ae60, #2ecc71)' : 'linear-gradient(135deg, #e74c3c, #c0392b)'};
+                color: white;
+                border-radius: 10px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                z-index: 10000;
+                font-weight: 600;
+                animation: slideInRight 0.3s ease-out;
+                max-width: 300px;
+            `;
+            
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease-in';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Add CSS for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Add interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to table rows
+            const tableRows = document.querySelectorAll('.details-table tr');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = 'rgba(255, 107, 107, 0.1)';
+                });
+                
+                row.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                });
+            });
+
+            // Animate statistics on load
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+                const finalValue = stat.textContent;
+                const isPercentage = finalValue.includes('%');
+                const numericValue = parseFloat(finalValue.replace('%', ''));
+                
+                let currentValue = 0;
+                const increment = numericValue / 50;
+                
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= numericValue) {
+                        currentValue = numericValue;
+                        clearInterval(timer);
+                    }
+                    
+                    stat.textContent = isPercentage ? 
+                        currentValue.toFixed(1) + '%' : 
+                        Math.floor(currentValue);
+                }, 50);
+            });
+
+            // Add floating animation to avatar
+            const avatar = document.querySelector('.avatar');
+            let floatDirection = 1;
+            
+            setInterval(() => {
+                const currentTransform = avatar.style.transform || '';
+                const translateY = floatDirection * 4;
+                avatar.style.transform = currentTransform.replace(/translateY\([^)]*\)/, '') + ` translateY(${translateY}px)`;
+                floatDirection *= -1;
+            }, 2500);
+
+            // Add pulse effect to permission items
+            const permissionItems = document.querySelectorAll('.permission-item');
+            permissionItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                }, index * 100);
+            });
+
+            // Add typing effect to admin title
+            const adminTitle = document.querySelector('.profile-info h2');
+            const originalText = adminTitle.innerHTML;
+            adminTitle.innerHTML = '';
+            
+            let i = 0;
+            const typeWriter = () => {
+                if (i < originalText.length) {
+                    adminTitle.innerHTML += originalText.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 50);
+                }
+            };
+            
+            setTimeout(typeWriter, 1000);
+        });
+
+        // Add CSS animations
+        const additionalStyles = document.createElement('style');
+        additionalStyles.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .permission-item {
+                opacity: 0;
+            }
+
+            .stat-card {
+                transition: transform 0.3s ease;
+            }
+
+            .stat-card:hover {
+                transform: translateY(-5px) scale(1.05);
+            }
+
+            .section {
+                animation: slideInFromBottom 0.8s ease-out forwards;
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            .section:nth-child(1) { animation-delay: 0.1s; }
+            .section:nth-child(2) { animation-delay: 0.2s; }
+            .section:nth-child(3) { animation-delay: 0.3s; }
+            .section:nth-child(4) { animation-delay: 0.4s; }
+
+            @keyframes slideInFromBottom {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .form-control:hover {
+                border-color: #ff8c8c;
+                box-shadow: 0 2px 8px rgba(255, 107, 107, 0.1);
+            }
+
+            .btn:active {
+                transform: translateY(0) scale(0.98);
+            }
+
+            .status-badge {
+                animation: pulseGlow 2s ease-in-out infinite alternate;
+            }
+
+            @keyframes pulseGlow {
+                from {
+                    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+                }
+                to {
+                    box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+                }
+            }
+        `;
+        document.head.appendChild(additionalStyles);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Escape key to close modal
+            if (e.key === 'Escape' && editProfileModal.style.display === 'block') {
+                hideModal();
+            }
+            
+            // Ctrl/Cmd + E to edit profile
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e' && editProfileModal.style.display !== 'block') {
+                e.preventDefault();
+                showModal();
+            }
+
+            // Ctrl/Cmd + S to save (if modal is open)
+            if ((e.ctrlKey || e.metaKey) && e.key === 's' && editProfileModal.style.display === 'block') {
+                e.preventDefault();
+                editProfileForm.dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // Add real-time validation
+        const inputs = document.querySelectorAll('.form-control');
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                validateField(this);
+            });
+
+            input.addEventListener('input', function() {
+                clearValidation(this);
+            });
+        });
+
+        function validateField(field) {
+            const value = field.value.trim();
+            let isValid = true;
+            let message = '';
+
+            switch(field.type) {
+                case 'email':
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    isValid = emailRegex.test(value);
+                    message = 'Please enter a valid email address';
+                    break;
+                case 'text':
+                    if (field.id === 'editPhone') {
+                        const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+                        isValid = phoneRegex.test(value.replace(/[\s\-\(\)]/g, ''));
+                        message = 'Please enter a valid phone number';
+                    }
+                    break;
+            }
+
+            if (!isValid && value) {
+                showFieldError(field, message);
+            }
+        }
+
+        function showFieldError(field, message) {
+            clearValidation(field);
+            
+            field.style.borderColor = '#e74c3c';
+            field.style.backgroundColor = '#fdf2f2';
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'field-error';
+            errorDiv.style.cssText = `
+                color: #e74c3c;
+                font-size: 0.85rem;
+                margin-top: 5px;
+                animation: fadeIn 0.3s ease-out;
+            `;
+            errorDiv.textContent = message;
+            
+            field.parentNode.appendChild(errorDiv);
+        }
+
+        function clearValidation(field) {
+            field.style.borderColor = '';
+            field.style.backgroundColor = '';
+            
+            const errorDiv = field.parentNode.querySelector('.field-error');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }
+
+        // Add context menu for admin actions
+        document.addEventListener('contextmenu', function(e) {
+            if (e.target.closest('.avatar')) {
+                e.preventDefault();
+                showContextMenu(e.clientX, e.clientY);
+            }
+        });
+
+        function showContextMenu(x, y) {
+            const existingMenu = document.querySelector('.context-menu');
+            if (existingMenu) existingMenu.remove();
+
+            const menu = document.createElement('div');
+            menu.className = 'context-menu';
+            menu.style.cssText = `
+                position: fixed;
+                left: ${x}px;
+                top: ${y}px;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                z-index: 10000;
+                padding: 8px 0;
+                min-width: 180px;
+                animation: fadeIn 0.2s ease-out;
+            `;
+
+            const menuItems = [
+                { icon: 'fas fa-user-edit', text: 'Edit Profile', action: showModal },
+                { icon: 'fas fa-key', text: 'Change Password', action: () => console.log('Change password') },
+                { icon: 'fas fa-shield-alt', text: 'Security Settings', action: () => console.log('Security settings') },
+                { icon: 'fas fa-sign-out-alt', text: 'Logout', action: () => console.log('Logout') }
+            ];
+
+            menuItems.forEach(item => {
+                const menuItem = document.createElement('div');
+                menuItem.style.cssText = `
+                    padding: 12px 16px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    transition: background-color 0.2s;
+                `;
+                menuItem.innerHTML = `<i class="${item.icon}"></i> ${item.text}`;
+                
+                menuItem.addEventListener('mouseenter', () => {
+                    menuItem.style.backgroundColor = '#f8f9fa';
+                });
+                
+                menuItem.addEventListener('mouseleave', () => {
+                    menuItem.style.backgroundColor = '';
+                });
+                
+                menuItem.addEventListener('click', () => {
+                    item.action();
+                    menu.remove();
+                });
+                
+                menu.appendChild(menuItem);
+            });
+
+            document.body.appendChild(menu);
+
+            // Remove menu when clicking elsewhere
+            setTimeout(() => {
+                document.addEventListener('click', function removeMenu() {
+                    menu.remove();
+                    document.removeEventListener('click', removeMenu);
+                }, 100);
+            });
+        }
+
+        // Initialize tooltips for permission items
+        const permissionItems = document.querySelectorAll('.permission-item');
+        permissionItems.forEach(item => {
+            item.addEventListener('mouseenter', function(e) {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.style.cssText = `
+                    position: absolute;
+                    background: rgba(0,0,0,0.8);
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    font-size: 0.85rem;
+                    z-index: 1000;
+                    pointer-events: none;
+                    white-space: nowrap;
+                `;
+                
+                const permissionTexts = {
+                    'User Management': 'Create, edit, and delete user accounts',
+                    'System Configuration': 'Modify system settings and preferences',
+                    'Database Access': 'Direct access to database operations',
+                    'Security Settings': 'Configure security policies and permissions',
+                    'Report Generation': 'Create and export system reports',
+                    'Backup Management': 'Schedule and manage system backups'
+                };
+                
+                const permissionName = item.querySelector('span').textContent;
+                tooltip.textContent = permissionTexts[permissionName] || 'Administrative permission';
+                
+                document.body.appendChild(tooltip);
+                
+                const rect = item.getBoundingClientRect();
+                tooltip.style.left = rect.left + 'px';
+                tooltip.style.top = (rect.top - tooltip.offsetHeight - 8) + 'px';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                const tooltip = document.querySelector('.tooltip');
+                if (tooltip) tooltip.remove();
+            });
+        });
+    </script>
+</body>
+</html>

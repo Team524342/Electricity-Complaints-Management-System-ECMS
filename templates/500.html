@@ -1,0 +1,10 @@
+<!-- templates/500.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="error-container">
+<h2>500 - Server Error</h2>
+<p>Something went wrong on our end. Please try again later.</p>
+<a href="{{ url_for('index') }}" class="btn btn-primary">Return to Home</a>
+</div>
+{% endblock %}

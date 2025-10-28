@@ -1,0 +1,1522 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electricity Complaint Management</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .container2 {
+            display: flex;
+            /* min-height: 100vh; */
+            max-width: 1400px;
+            margin:5px 5px;
+            /* gap: 20px;
+            padding: 20px; */
+            --bs-gutter-x: 0px;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+             padding: 30px 20px; 
+            /* box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2); */
+            height: 130vh;
+            position: sticky;
+           
+        }
+
+        .sidebar h2 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .nav-link i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            flex: 1;
+            background: linear-gradient(135deg, #dee0e7, #acdabf 100%);
+            /* background: rgba(255, 255, 255, 0.95); */
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: calc(100vh - 40px);
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 25px;
+            color: white;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .card.warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .card.success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .card.primary {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .card-header {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .card-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-light {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-light:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            color: white;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-top: 20px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border: none;
+        }
+
+        .table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .table tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge.bg-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+
+        .badge.bg-warning {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            color: #333;
+        }
+
+        .badge.bg-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .badge.bg-info {
+            background: linear-gradient(135deg, #17a2b8, #007bff);
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: rgb(255, 255, 255);
+            border: 2px solid #1e5c85;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #031011;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border: 2px solid #1e5c85;
+            color: #000;
+        }
+
+        .alert {
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: none;
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            color: #667eea;
+            border-left: 4px solid #667eea;
+        }
+
+        .status-result {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            display: none;
+        }
+
+        .voice-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .microphone-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .microphone-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .microphone-btn.recording {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                /* padding: 10px; */
+            }
+            
+            .sidebar {
+                width: 100%;
+                position: fixed;
+                margin: 1px;
+                top: 0;
+            }
+            
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Add these CSS styles to your stylesheet for the timeline flowchart */
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background: #e0e6ed;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding-left: 70px;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: 22px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timeline-item.completed .timeline-marker {
+            background: #28a745;
+            color: white;
+        }
+
+        .timeline-item.pending .timeline-marker {
+            background: #6c757d;
+            color: white;
+        }
+
+        .timeline-item.completed .timeline-marker i {
+            font-size: 8px;
+        }
+
+        .timeline-item.pending .timeline-marker i {
+            font-size: 6px;
+        }
+
+        .timeline-content {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #dee2e6;
+            position: relative;
+        }
+
+        .timeline-item.completed .timeline-content {
+            border-left-color: #28a745;
+            background: #f8fff9;
+        }
+
+        .timeline-item.pending .timeline-content {
+            border-left-color: #6c757d;
+            background: #f5f5f5;
+            opacity: 0.7;
+        }
+
+        .timeline-content h6 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .timeline-content p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .complaint-details {
+            max-width: 100%;
+        }
+
+        .complaint-header {
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .complaint-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .status-result {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .loading {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: none;
+            margin-right: 10px;
+
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive design for timeline */
+        @media (max-width: 768px) {
+            .timeline-item {
+                padding-left: 50px;
+            }
+            
+            .timeline::before {
+                left: 20px;
+            }
+            
+            .timeline-marker {
+                left: 12px;
+            }
+        }
+
+        .timeline {
+            margin-top: 20px;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .timeline-marker {
+            margin-right: 15px;
+            z-index: 1;
+        }
+
+        .timeline-marker i {
+            font-size: 1.2em;
+        }
+
+        .timeline-item.completed .timeline-marker i {
+            color: #28a745;
+        }
+
+        .timeline-item.pending .timeline-marker i {
+            color: #6c757d;
+        }
+
+        .timeline-content {
+            flex: 1;
+            padding-bottom: 20px;
+            border-left: 2px solid #e9ecef;
+            padding-left: 20px;
+            margin-left: -8px;
+        }
+
+        .timeline-item:last-child .timeline-content {
+            border-left: none;
+        }
+
+        .timeline-content h6 {
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        /* 
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        } */
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+    <div class="container2">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2><i class="fas fa-bolt"></i> Electricity Complaint Management</h2>
+            
+            <a href="#" class="nav-link active" data-section="dashboard">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="#" class="nav-link" data-section="profile">
+                <i class="fas fa-user"></i> Profile
+            </a>
+            <a href="#" class="nav-link" data-section="file-complaint">
+                <i class="fas fa-file-alt"></i> File Complaint
+            </a>
+            <a href="#" class="nav-link" data-section="complaint-history">
+                <i class="fas fa-history"></i> Complaint History
+            </a>
+            <a href="#" class="nav-link" data-section="track-status">
+                <i class="fas fa-map-marker-alt"></i> Track Status
+            </a>
+            <a href="#" class="nav-link" data-section="settings">
+                <i class="fas fa-cog"></i> Settings
+            </a>
+            <a href="#" class="nav-link" data-section="feedback">
+                <i class="fas fa-comment"></i> Feedback
+            </a>
+            <a href="#" class="nav-link" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="section active">
+                <h1 class="section-title">Dashboard Overview</h1>
+                <div class="dashboard-cards">
+                    <div class="card primary">
+                        <div class="card-header">
+                            <i class="fas fa-file-alt"></i> Total Complaints
+                        </div>
+                        <div class="card-title" id="totalComplaints">{{ complaints|length }}</div>
+                    </div>
+                    <div class="card warning">
+                        <div class="card-header">
+                            <i class="fas fa-clock"></i> In Progress
+                        </div>
+                        <div class="card-title" id="inProgressComplaints">{{ complaints|selectattr('status', 'equalto', 'In Progress')|list|length }}</div>
+                    </div>
+                    <div class="card success">
+                        <div class="card-header">
+                            <i class="fas fa-check-circle"></i> Resolved
+                        </div>
+                        <div class="card-title" id="resolvedComplaints">{{ complaints|selectattr('status', 'equalto', 'Resolved')|list|length }}</div>
+                    </div>
+                </div>
+                
+                
+            </div>
+
+            <!-- File Complaint Section -->
+           
+             <div id="file-complaint" class="section">
+                <h1 class="section-title">File a New Complaint</h1>
+                  
+                <div class="dashboard-header">
+                    <h4><i class="fas fa-users me-2"></i>Manage Technicians</h4>
+                </div>
+                <div class="stats-card">
+                    <button class="btn btn-primary">
+                         <a href="{{( url_for('submit_complaint'))}}" style="color: white;"><i class="fas fa-file-alt"></i> Text Complaint</a>
+                     </button>
+                     
+                    <button class="btn btn-info" onclick="toggleVoiceRecording()">
+                        <i class="fas fa-microphone"></i> Voice Complaint
+                    </button>
+                    <p style="color: black;"> Profile management interface coming soon...</p>
+                </div>
+            
+                <div id="voiceRecording" style="display: none;">
+                    <div style="text-align: center; padding: 20px;">
+                        <button class="microphone-btn" id="microphoneBtn" >
+                            <a href="{{( url_for('start_voice_interaction'))}}" style="color: white; text-decoration: none;">
+                                <i class="fas fa-microphone"></i>
+                            </a>
+                            <!-- <i class="fas fa-microphone"></i> -->
+                        </button>
+                        <p>Click to start/stop recording</p>
+                        <div id="recordingStatus"></div>
+                    </div>
+                </div>
+             </div>
+
+            <!-- Complaint History Section -->
+            <div id="complaint-history" class="section">
+                <h1 class="section-title">Complaint History</h1>
+                
+                <div class="table-container">
+                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 20px;">
+                        <h3>Your Complaints</h3>
+                        <div>
+                            <button class="btn btn-primary" onclick="refreshComplaints()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                      {% if complaints %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th> Complaint ID</th>
+                                    <th>Complaint Type</th>
+                                    <th>Complaint Description</th>
+                                    <th> Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for complaint in complaints %}
+                                {% set timeline = complaint.timeline if complaint.timeline else [] %}
+                               
+                                
+                                <tr
+                                    data-id="{{ complaint.complaint_id }}"
+                                    data-category="{{ complaint.category }}"
+                                    data-description="{{ complaint.description }}"
+                                    data-date="{{ complaint.submission_date }}"
+                                    data-status="{{ complaint.status }}"
+                                    data-timeline='{{ complaint.timeline if complaint.timeline is not none else [] | tojson | safe }}'
+                                >
+
+                                
+                                    <td>{{ complaint.complaint_id }}</td>
+                                    <td>{{ complaint.category }}</td>
+                                    <td>{{ complaint.description[:50] }}{% if complaint.description|length > 50 %}...{% endif %}</td>
+                                    <td>{{ complaint.submission_date }}</td>
+                                    <td>
+                                        {% if complaint.status == 'Open' %}
+                                        <span class="badge bg-secondary">{{ complaint.status }}</span>
+                                        {% elif complaint.status == 'In Progress' %}
+                                        <span class="badge bg-warning text-dark">{{ complaint.status }}</span>
+                                        {% elif complaint.status == 'Resolved' %}
+                                        <span class="badge bg-success">{{ complaint.status }}</span>
+                                        {% else %}
+                                        <span class="badge bg-primary">{{ complaint.status }}</span>
+                                        {% endif %}
+                                        {% if complaint.voice_complaint %}
+                                        <!-- <span class="badge bg-info ms-1" title="Submitted using voice">
+                                            <i class="fas fa-microphone"></i>
+                                        </span> -->
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('view_complaint', complaint_id=complaint.complaint_id) }}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <p>You haven't submitted any complaints yet.</p>
+                    </div>
+                      
+                 {% endif %}
+            </div>
+            </div>
+
+            <!-- Track Status Section -->
+            <div id="track-status" class="section">
+                <h1 class="section-title">Track Complaint Status</h1>
+            
+                <div class="form-container">
+                    <form id="trackingForm">
+                        <div class="form-group">
+                            <label class="form-label">Complaint ID</label>
+                            <input type="text" class="form-control" id="trackingId" placeholder="Enter your complaint ID (e.g., EC001)">
+                        </div>
+                    
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Track Status
+                        </button>
+                    </form>
+
+                    <div id="trackingResult" class="status-result">
+                        <h4>Complaint Status</h4>
+                        <div id="statusDetails"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Section -->
+            <div id="profile" class="section">
+                <div>
+                    <object type="text/html" data="{{( url_for('profile'))}}" width="100%" height="1200px"></object>
+                </div>
+               
+                <div class="stats-card">
+                   
+                    
+                </div>
+            </div>   
+                
+            
+            <!-- Settings Section -->
+            <div id="settings" class="section">
+                <h1 class="section-title">Settings</h1>
+                
+                <div class="form-container">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <input type="checkbox" id="emailNotifications" checked> 
+                            Email Notifications
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <input type="checkbox" id="smsNotifications" checked> 
+                            SMS Notifications
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Language</label>
+                        <select class="form-control" id="language">
+                            <option value="en">English</option>
+                            <option value="hi">Hindi</option>
+                            <option value="Telugu">Telugu</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="saveSettings()">
+                        <i class="fas fa-save"></i> Save Settings
+                    </button>
+                </div>
+            </div>
+            <div id="feedback" class="section"><h1 class="section-title">Feedback Section</h1>
+                <div class="form-container">
+                    <form id="feedbackForm">
+                        <div class="form-group">
+                            <label class="form-label" for="feedbackType">Feedback Type</label>
+                            <select class="form-control" id="feedbackType" required>
+                                <option value="">Select Type</option>
+                                <option value="general">General Feedback</option>
+                                <option value="bug">Report a Bug</option>
+                                <option value="feature">Feature Request</option>
+                                <option value="support">Support</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="feedbackMessage">Message</label>
+                            <textarea class="form-control" id="feedbackMessage" rows="5" placeholder="Enter your feedback here..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Submit Feedback
+                        </button>
+                    </form>
+                </div>
+            </div>
+             
+        </div>
+    </div>
+
+    <script>
+        const allComplaints = {{ complaints | tojson }};
+    </script>
+
+    <script>
+        // Global variables
+        let isRecording = false;
+        let mediaRecorder;
+        let audioChunks = [];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeNavigation();
+            initializeForms();
+            loadDashboardData();
+        });
+
+        // Navigation functionality
+        function initializeNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetSection = this.getAttribute('data-section');
+                    
+                    if (targetSection) {
+                        // Remove active class from all nav links
+                        navLinks.forEach(nav => nav.classList.remove('active'));
+                        
+                        // Add active class to clicked nav link
+                        this.classList.add('active');
+                        
+                        // Hide all sections
+                        sections.forEach(section => {
+                            section.classList.remove('active');
+                        });
+                        
+                        // Show target section
+                        const targetElement = document.getElementById(targetSection);
+                        if (targetElement) {
+                            targetElement.classList.add('active');
+                            
+                            // Load section-specific data
+                            if (targetSection === 'complaint-history') {
+                                loadComplaintHistory();
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        // Initialize forms
+        function initializeForms() {
+            // Complaint form
+            const complaintForm = document.getElementById('complaintForm');
+            if (complaintForm) {
+                complaintForm.addEventListener('submit', handleComplaintSubmission);
+            }
+
+            // Tracking form
+            const trackingForm = document.getElementById('trackingForm');
+            if (trackingForm) {
+                trackingForm.addEventListener('submit', handleTrackingSubmission);
+            }
+
+            // Profile form
+            const profileForm = document.getElementById('profileForm');
+            if (profileForm) {
+                profileForm.addEventListener('submit', handleProfileUpdate);
+            }
+        }
+
+
+        function createComplaintRow(complaint) {
+            const row = document.createElement('tr');
+            const statusClass = getStatusClass(complaint.status);
+            
+            row.innerHTML = `
+                <td>${complaint.id}</td>
+                <td>${complaint.type}</td>
+                <td>${complaint.date}</td>
+                <td><span class="badge ${statusClass}">${complaint.status}</span></td>
+                <td><button class="btn btn-primary btn-sm" onclick="viewComplaint('${complaint.id}')">View</button></td>
+            `;
+            
+            return row;
+        }
+
+        function getStatusClass(status) {
+            switch (status.toLowerCase()) {
+                case 'resolved': return 'bg-success';
+                case 'in progress': return 'bg-warning';
+                case 'open': return 'bg-secondary';
+                default: return 'bg-secondary';
+            }
+        }
+
+        // Complaint submission
+        function handleComplaintSubmission(e) {
+            e.preventDefault();
+            
+            const formData = {
+                type: document.getElementById('complaintType').value,
+                description: document.getElementById('complaintDescription').value,
+                location: document.getElementById('complaintLocation').value,
+                contact: document.getElementById('complaintContact').value
+            };
+
+            if (!formData.type || !formData.description) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+
+            // Simulate API call
+            submitComplaint(formData);
+        }
+
+        function submitComplaint(formData) {
+            // Show loading state
+            const submitBtn = document.querySelector('#complaintForm button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="loading"></span> Submitting...';
+            submitBtn.disabled = true;
+
+            // Simulate API call
+            setTimeout(() => {
+                const complaintId = 'EC' + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+                
+                showNotification(`Complaint submitted successfully! Your complaint ID is: ${complaintId}`, 'success');
+                
+                // Reset form
+                document.getElementById('complaintForm').reset();
+                
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                
+                // Update dashboard stats
+                updateDashboardStats();
+            }, 2000);
+        }
+
+        // Voice recording functionality
+        function toggleVoiceRecording() {
+            const voiceSection = document.getElementById('voiceRecording');
+            const textForm = document.getElementById('complaintForm');
+            
+            if (voiceSection.style.display === 'none') {
+                voiceSection.style.display = 'block';
+                textForm.style.display = 'none';
+            } else {
+                voiceSection.style.display = 'none';
+                textForm.style.display = 'block';
+            }
+        }
+
+        async function toggleRecording() {
+            const micBtn = document.getElementById('microphoneBtn');
+            const statusDiv = document.getElementById('recordingStatus');
+
+            if (!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = (event) => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                        processVoiceComplaint(audioBlob);
+                    };
+
+                    mediaRecorder.start();
+                    isRecording = true;
+                    
+                    micBtn.classList.add('recording');
+                    micBtn.innerHTML = '<i class="fas fa-stop"></i>';
+                    statusDiv.innerHTML = '<p style="color: #ff6b6b; font-weight: 600;">Recording... Click to stop</p>';
+                    
+                } catch (error) {
+                    showNotification('Microphone access denied. Please enable microphone permissions.', 'error');
+                }
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+                
+                micBtn.classList.remove('recording');
+                micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                statusDiv.innerHTML = '<p style="color: #667eea; font-weight: 600;">Processing your voice complaint...</p>';
+            }
+        }
+
+        function processVoiceComplaint(audioBlob) {
+            // Simulate voice processing
+            setTimeout(() => {
+                const statusDiv = document.getElementById('recordingStatus');
+                statusDiv.innerHTML = `
+                    <div style="background: rgba(67, 233, 123, 0.1); padding: 15px; border-radius: 10px; margin-top: 15px;">
+                        <h4 style="color: #43e97b; margin-bottom: 10px;">Voice Complaint Processed</h4>
+                        <p><strong>Detected Issue:</strong> Power outage in residential area</p>
+                        <p><strong>Location:</strong> Block A, Sector 15</p>
+                        <p><strong>Complaint ID:</strong> VC${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}</p>
+                        <button class="btn btn-success" onclick="confirmVoiceComplaint()">
+                            <i class="fas fa-check"></i> Confirm & Submit
+                        </button>
+                    </div>
+                `;
+            }, 3000);
+        }
+
+        function confirmVoiceComplaint() {
+            showNotification('Voice complaint submitted successfully!', 'success');
+            document.getElementById('voiceRecording').style.display = 'none';
+            document.getElementById('complaintForm').style.display = 'block';
+            document.getElementById('recordingStatus').innerHTML = '';
+        }
+
+        
+      // Profile update
+        function handleProfileUpdate(e) {
+            e.preventDefault();
+            
+            const profileData = {
+                name: document.getElementById('profileName').value,
+                email: document.getElementById('profileEmail').value,
+                phone: document.getElementById('profilePhone').value,
+                location: document.getElementById('profileLocation').value
+            };
+
+            // Simulate API call
+            setTimeout(() => {
+                showNotification('Profile updated successfully!', 'success');
+            }, 1000);
+        }
+
+        // Complaint history
+        function loadComplaintHistory() {
+            const tableBody = document.getElementById('complaintHistoryTable');
+            
+            // Show loading
+            tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;"><div class="loading"></div> Loading complaints...</td></tr>';
+            
+            // Simulate API call
+            setTimeout(() => {
+                // const complaints = [
+                //     { id: 'EC001', type: 'Power Outage', description: 'Frequent power cuts in our area for the past week', date: '2025-05-20', status: 'In Progress', isVoice: false },
+                //     { id: 'EC002', type: 'Voltage Fluctuation', description: 'Voltage fluctuation damaging electrical appliances', date: '2025-05-19', status: 'Resolved', isVoice: true },
+                //     { id: 'EC003', type: 'Billing Issue', description: 'Incorrect meter reading in monthly bill', date: '2025-05-18', status: 'Open', isVoice: false },
+                //     { id: 'EC004', type: 'Connection Issue', description: 'New connection request pending approval', date: '2025-05-17', status: 'Under Review', isVoice: false }
+                // ];
+
+                tableBody.innerHTML = '';
+                complaints.forEach(complaint => {
+                    const row = document.createElement('tr');
+                    const statusClass = getStatusClass(complaint.status);
+                    
+                    row.innerHTML = `
+                        <td>${complaint.id}</td>
+                        <td>${complaint.type}</td>
+                        <td>${complaint.description.substring(0, 50)}${complaint.description.length > 50 ? '...' : ''}</td>
+                        <td>${complaint.date}</td>
+                        <td>
+                            <span class="badge ${statusClass}">${complaint.status}</span>
+                            ${complaint.isVoice ? '<span class="badge bg-info ms-1" title="Voice Complaint"><i class="fas fa-microphone"></i></span>' : ''}
+                        </td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick="viewComplaint('${complaint.id}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+            }, 1000);
+        }
+
+        function refreshComplaints() {
+            loadComplaintHistory();
+            showNotification('Complaints refreshed successfully!', 'success');
+        }
+
+        function viewComplaint(complaintId) {
+            showNotification(`Opening complaint ${complaintId}...`, 'info');
+            // In a real application, this would navigate to a detailed complaint view
+        }
+
+        // Settings
+        function saveSettings() {
+            const settings = {
+                emailNotifications: document.getElementById('emailNotifications').checked,
+                smsNotifications: document.getElementById('smsNotifications').checked,
+                language: document.getElementById('language').value
+            };
+
+            // Simulate API call
+            setTimeout(() => {
+                showNotification('Settings saved successfully!', 'success');
+            }, 500);
+        }
+
+        // Utility functions
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 10px;
+                color: white;
+                font-weight: 600;
+                z-index: 10000;
+                max-width: 400px;
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+            `;
+
+            // Set background color based on type
+            switch (type) {
+                case 'success':
+                    notification.style.background = 'linear-gradient(135deg, #43e97b, #38f9d7)';
+                    break;
+                case 'error':
+                    notification.style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a24)';
+                    break;
+                case 'warning':
+                    notification.style.background = 'linear-gradient(135deg, #ffc107, #fd7e14)';
+                    break;
+                default:
+                    notification.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+            }
+
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Animate in
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 4000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                showNotification('Logging out...', 'info');
+                // In a real application, this would redirect to login page
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 1500);
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key) {
+                    case '1':
+                        e.preventDefault();
+                        document.querySelector('[data-section="dashboard"]').click();
+                        break;
+                    case '2':
+                        e.preventDefault();
+                        document.querySelector('[data-section="file-complaint"]').click();
+                        break;
+                    case '3':
+                        e.preventDefault();
+                        document.querySelector('[data-section="complaint-history"]').click();
+                        break;
+                    case '4':
+                        e.preventDefault();
+                        document.querySelector('[data-section="track-status"]').click();
+                        break;
+                }
+            }
+        });
+
+        // Auto-refresh dashboard every 30 seconds
+        setInterval(() => {
+            if (document.getElementById('dashboard').classList.contains('active')) {
+                updateDashboardStats();
+            }
+        }, 30000);
+
+        // Initialize tooltips and enhanced UX
+        document.addEventListener('mouseover', function(e) {
+            if (e.target.hasAttribute('title')) {
+                // Custom tooltip implementation could go here
+            }
+        });
+
+        // Form validation enhancements
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.hasAttribute('required') && !this.value.trim()) {
+                    this.style.borderColor = '#ff6b6b';
+                } else {
+                    this.style.borderColor = '#e0e0e0';
+                }
+            });
+
+            input.addEventListener('focus', function() {
+                this.style.borderColor = '#667eea';
+            });
+        });
+
+        // Enhanced table interactions
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('tbody tr')) {
+                const row = e.target.closest('tbody tr');
+                row.style.backgroundColor = 'rgba(102, 126, 234, 0.1)';
+                setTimeout(() => {
+                    row.style.backgroundColor = '';
+                }, 200);
+            }
+        });
+
+        // Progressive Web App features
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                // Service worker registration would go here for PWA functionality
+            });
+        }
+
+
+    </script>
+    <!-- Tracking logic -->
+
+<script>
+function getStatusClass(status) {
+    const map = {
+        'Open': 'bg-secondary',
+        'In Progress': 'bg-warning text-dark',
+        'Resolved': 'bg-success',
+        'Closed': 'bg-dark',
+        'Under Review': 'bg-info'
+    };
+    return map[status] || 'bg-primary';
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed; top: 20px; right: 20px; z-index: 9999;
+        padding: 12px 20px; border-radius: 8px; color: #fff; font-weight: bold;
+        background-color: ${type === 'error' ? '#e74c3c' : '#2ecc71'};
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const trackingForm = document.getElementById('trackingForm');
+    if (trackingForm) {
+        trackingForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const inputId = document.getElementById('trackingId').value.trim().toUpperCase();
+
+            if (!inputId) {
+                showNotification('Please enter a complaint ID', 'error');
+                return;
+            }
+
+            const rows = document.querySelectorAll('#complaint-history table tbody tr');
+            let found = false;
+
+            rows.forEach(row => {
+                if (!row.dataset.id) return;
+
+                const complaint = {
+                    complaint_id: row.dataset.id,
+                    category: row.dataset.category,
+                    description: row.dataset.description,
+                    submission_date: row.dataset.date,
+                    status: row.dataset.status,
+                    timeline: []
+                };
+
+                try {
+                    complaint.timeline = JSON.parse(row.dataset.timeline || "[]");
+                } catch (err) {
+                    console.warn("Timeline parsing failed:", err);
+                }
+
+                // Use sample fallback if no timeline or empty
+                if (!Array.isArray(complaint.timeline) || complaint.timeline.length === 0) {
+                    const submittedDate = complaint.submission_date || "N/A";
+
+                    complaint.timeline = [
+                        {
+                            status: "Submitted",
+                            date: submittedDate,
+                            description: "Complaint has been submitted.",
+                            completed: true
+                        }
+                    ];
+
+                    if (["In Progress", "Resolved", "Closed"].includes(complaint.status)) {
+                        complaint.timeline.push({
+                            status: "Assigned",
+                            date: "Assigned Date",
+                            description: "Assigned to technician.",
+                            completed: complaint.status !== "assigned" ? true : false
+                        });
+                    }
+
+                    if (["In Progress", "Resolved", "Closed"].includes(complaint.status)) {
+                        complaint.timeline.push({
+                            status: "In Progress",
+                            date: "Work Started",
+                            description: "Work is currently in progress.",
+                            completed: true
+                        });
+                    }
+
+                    if (["Resolved", "Closed"].includes(complaint.status)) {
+                        complaint.timeline.push({
+                            status: "Resolved",
+                            date: "Resolution Date",
+                            description: "Complaint resolved.",
+                            completed: true 
+                        });
+                    }
+                }
+
+
+                if (complaint.complaint_id.toUpperCase() === inputId) {
+                    const statusClass = getStatusClass(complaint.status);
+
+                    const timelineHTML = complaint.timeline.map(step => `
+                        <div class="timeline-item ${step.completed ? 'completed' : 'pending'}">
+                            <div class="timeline-marker">
+                                <i class="fas ${step.completed ? 'fa-check-circle' : 'fa-circle'}"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>${step.status}</h6>
+                                <p class="text-muted small">${step.date || 'Not available'}</p>
+                                <p class="mb-0">${step.description || 'No description provided.'}</p>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    const detailsDiv = document.getElementById('statusDetails');
+                    const resultDiv = document.getElementById('trackingResult');
+                    resultDiv.style.display = 'block';
+                    detailsDiv.innerHTML = `
+                        <div class="complaint-details">
+                            <h5><strong>Complaint ID:</strong> ${complaint.complaint_id}</h5>
+                            <p><strong>Category:</strong> ${complaint.category}</p>
+                            <p><strong>Date:</strong> ${complaint.submission_date}</p>
+                            <p><strong>Description:</strong> ${complaint.description}</p>
+                            <span class="badge ${statusClass}">${complaint.status}</span>
+                            <hr/>
+                            <h6><strong>Status Timeline</strong></h6>
+                            <div class="timeline">${timelineHTML}</div>
+                        </div>
+                    `;
+                    found = true;
+                }
+            });
+
+            if (!found) {
+                showNotification('Complaint ID not found.', 'error');
+                document.getElementById('trackingResult').style.display = 'block';
+                document.getElementById('statusDetails').innerHTML = '';
+            }
+        });
+    }
+});
+</script>
+<script>
+        // Wait for the page to fully load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Select all alerts
+            const alerts = document.querySelectorAll('.alert');
+
+            alerts.forEach(function(alert) {
+                // Auto-dismiss each alert after 3 seconds (3000ms)
+                setTimeout(function () {
+                    alert.classList.remove('show');  // Bootstrap's fade out
+                    alert.classList.add('fade');
+                    alert.style.opacity = '0';
+
+                    // Completely remove from DOM after fade-out
+                    setTimeout(function () {
+                        alert.remove();
+                    }, 500); // Wait 0.5s for fade-out animation
+                }, 3000); // Wait 3 seconds before starting to hide
+            });
+        });
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    // ...existing code...
+
+    // Feedback form handler
+    const feedbackForm = document.getElementById('feedbackForm');
+    if (feedbackForm) {
+        feedbackForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const type = document.getElementById('feedbackType').value;
+            const message = document.getElementById('feedbackMessage').value.trim();
+
+            if (!type || !message) {
+                showNotification('Please fill in all fields.', 'error');
+                return;
+            }
+
+            // Simulate sending feedback (replace with AJAX if needed)
+            showNotification('Thank you for your feedback!', 'success');
+            feedbackForm.reset();
+        });
+    }
+});
+</script>
+
+
+</body>
+{% endblock %}

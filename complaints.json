@@ -1,0 +1,13 @@
+[
+  {
+    "complaint_id": "EC20250623121205",
+    "customer_name": "alex john",
+    "phone_number": "12123456789",
+    "address": "baba nagar",
+    "complaint_type": "voltage fluctuation",
+    "description": "voltage power",
+    "timestamp": "2025-06-23T12:12:05.525369",
+    "priority": "Medium",
+    "status": "Open"
+  }
+]

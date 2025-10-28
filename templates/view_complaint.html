@@ -1,0 +1,563 @@
+ <!-- templates/view_complaint.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <!-- Update view_complaint.html to include voice complaint indicator -->
+<style>
+    /* Modern Responsive CSS for Complaint Detail Page */
+
+/* CSS Variables for consistent theming */
+:root {
+  --primary-color: #3b82f6;
+  --primary-dark: #2563eb;
+  --secondary-color: #64748b;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+  --white: #ffffff;
+  --border-radius: 12px;
+  --border-radius-sm: 8px;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --transition: all 0.2s ease-in-out;
+}
+
+/* Base styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.6;
+  color: var(--gray-700);
+  background-color: var(--gray-50);
+  margin: 0;
+  /* padding: 20px; */
+}
+
+/* Container */
+.complaint-detail {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Card styles */
+.card {
+  background: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid var(--gray-200);
+  transition: var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Table styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+}
+
+table tr {
+  border-bottom: 1px solid var(--gray-200);
+}
+
+table tr:last-child {
+  border-bottom: none;
+}
+
+table td {
+  padding: 16px 12px;
+  vertical-align: top;
+}
+
+table td:first-child {
+  font-weight: 600;
+  color: var(--gray-800);
+  width: 180px;
+  min-width: 140px;
+}
+
+table td:last-child {
+  color: var(--gray-700);
+}
+
+/* Badge styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.bg-secondary {
+  background-color: var(--gray-200);
+  color: var(--gray-800);
+}
+
+.bg-warning {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.bg-success {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.bg-primary {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+/* Form styles */
+.admin-actions {
+  border-top: 1px solid var(--gray-200);
+  padding-top: 24px;
+  margin-top: 24px;
+}
+
+.admin-actions:first-child {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.admin-actions h3 {
+  margin: 0 0 20px 0;
+  color: var(--gray-800);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--gray-700);
+}
+
+.form-group select,
+.form-group textarea,
+.form-select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--border-radius-sm);
+  font-size: 1rem;
+  transition: var(--transition);
+  color: var(--gray-800);
+  background-color: var(--white);
+}
+
+.form-group select:focus,
+.form-group textarea:focus,
+.form-select:focus {
+  outline: none;
+  color: var(--gray-800);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Button styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition);
+  min-height: 44px;
+  gap: 8px;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+  background-color: var(--gray-200);
+  color: var(--gray-700);
+}
+
+.btn-secondary:hover {
+  background-color: var(--gray-300);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Link styles */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+/* Back link */
+.back-link {
+  margin-top: 32px;
+  text-align: center;
+}
+
+/* Row and column utilities */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -8px;
+}
+
+.col-md-4,
+.col-md-8 {
+  padding: 8px;
+}
+
+.mb-3 {
+  margin-bottom: 16px;
+}
+
+.fw-bold {
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  .complaint-detail {
+    padding: 0 10px;
+  }
+  
+  .card {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  table {
+    font-size: 0.9rem;
+  }
+  
+  table td {
+    padding: 12px 8px;
+  }
+  
+  table td:first-child {
+    width: 120px;
+    min-width: 100px;
+    font-size: 0.875rem;
+  }
+  
+  /* Stack table on mobile */
+  table tr {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 2px solid var(--gray-200);
+    padding: 16px 0;
+  }
+  
+  table tr:last-child {
+    border-bottom: none;
+  }
+  
+  table td {
+    padding: 4px 0;
+    border: none;
+    width: 100% !important;
+  }
+  
+  table td:first-child {
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 4px;
+  }
+  
+  .btn {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+  
+  .admin-actions h3 {
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .badge {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+  }
+  
+  .form-group select,
+  .form-group textarea,
+  .form-select {
+    padding: 10px 12px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Large screens */
+@media (min-width: 1200px) {
+  .complaint-detail {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  
+  .card:first-child {
+    grid-row: 1 / span 2;
+  }
+  
+  .back-link {
+    grid-column: 1 / -1;
+    margin-top: 24px;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    padding: 0;
+  }
+  
+  .card {
+    box-shadow: none;
+    border: 1px solid var(--gray-300);
+    page-break-inside: avoid;
+  }
+  
+  .admin-actions,
+  .back-link {
+    display: none;
+  }
+  
+  .btn {
+    display: none;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus styles for better accessibility */
+.btn:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --gray-200: #000000;
+    --gray-300: #000000;
+    --border-radius: 4px;
+    --border-radius-sm: 4px;
+  }
+  
+  .card {
+    border: 2px solid var(--gray-800);
+  }
+  
+  .badge {
+    border: 1px solid currentColor;
+  }
+}
+</style>
+
+<div class="complaint-detail">
+    <div class="card">
+     <table style="border-collapse: collapse; width: auto; ">
+                    <tr>
+                        <td>Complaint ID:</td>
+                        <td>{{ complaint.complaint_id }}</td>
+                    </tr>
+                    <tr>
+                        <td>Category:</td>
+                        <td>{{ complaint.category }}</td>
+                    </tr>
+                    <tr>
+                        <td>Description:</td>
+                        <td>{{ complaint.description }}</td>
+                    </tr>
+                    <tr>
+                        <td>Location:</td>
+                        <td>{{ complaint.location }}</td>
+                    </tr>
+                    <tr>
+                        <td>Submission Date:</td>
+                        <td>{{ complaint.submission_date }}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                       <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Status:</div>
+                        </td>
+                        <td>
+                        <div class="col-md-8">
+                            {% if complaint.status == 'Open' %}
+                            <span class="badge bg-secondary">{{ complaint.status }}</span>
+                            {% elif complaint.status == 'In Progress' %}
+                            <span class="badge bg-warning text-dark">{{ complaint.status }}</span>
+                            {% elif complaint.status == 'Resolved' %}
+                            <span class="badge bg-success">{{ complaint.status }}</span>
+                            {% else %}
+                            <span class="badge bg-primary">{{ complaint.status }}</span>
+                            {% endif %}
+                        </div>
+                         </td>
+                    </tr>
+                    <tr>
+                    {% if complaint.assigned_to %}
+                      <td>Assigned To:</td>
+                      <td>{{ complaint.technician_name if complaint.technician_name else complaint.assigned_to }}</td>
+                 
+                    {% endif %}
+                    </tr>
+                    
+                     {% if complaint.resolution_notes %}
+                    <tr>
+                        <td>Resolution Notes:</td>
+                        <td>{{ complaint.resolution_notes }}</td>
+                    </tr>
+                     {% endif %}
+                    <tr> 
+                    
+                        {% if complaint.resolution_notes %}
+                        <td><strong>Date:</strong></td><td> {{ complaint.resolution_date }}</td>
+                       
+                        {% else %}
+                        <p>No resolution information available yet.</p>
+                        {% endif %}
+                    </tr>
+                    <tr> {% if complaint.attachment_path %}
+                        <td>Attachment</td>
+                        <td> <a href="/{{ complaint.attachment_path }}" target="_blank">View Attachment</a></td>
+                          {% endif %}
+                    </tr>
+                </table>
+       
+
+</div>
+   
+    {% if session['role'] == 'admin' %}
+    <div class="card">
+    <div class="admin-actions">
+        <h3>Update Status</h3>
+        <form method="POST" action="{{ url_for('update_complaint', complaint_id=complaint.complaint_id) }}">
+            <div class="form-group">
+                
+                <label for="status">Status:</label>
+                <select id="status" name="status" required>
+                    <option value="Open" {% if complaint.status == 'Open' %}selected{% endif %}>Open</option>
+                    <option value="In Progress" {% if complaint.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                    <option value="Resolved" {% if complaint.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="notes">Resolution Notes:</label>
+                <textarea id="notes" name="notes" rows="3">{{ complaint.resolution_notes }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Complaint</button>
+        </form>
+    </div>
+</div>
+
+<!-- Assign Technician Section -->
+<div class="card">
+    <div class="admin-actions">
+        <h3>Assign Technician</h3>
+        <form action="{{ url_for('assign_technician', complaint_id=complaint.complaint_id) }}" method="POST">
+            <div class="form-group">
+                <label for="technician_id">Select Technician:</label>
+                <select name="technician_id" id="technician_id" class="form-select" required>
+                    <option value="">-- Select a Technician --</option>
+                    {% for technician in technicians %}
+                    <option value="{{ technician.technician_id }}" 
+                        {% if complaint.assigned_to == technician.technician_id %}selected{% endif %}>
+                        {{ technician.fullName }} ({{ technician.phone }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Assign Technician</button>
+        </form> 
+    </div>
+</div>
+    {% endif %}
+    
+    <div class="back-link">
+        {% if session['role'] == 'admin' %}
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+        {% else %}
+            <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+        {% endif %}
+    </div>
+</div>
+
+ {% endblock %}

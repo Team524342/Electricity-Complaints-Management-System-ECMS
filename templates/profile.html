@@ -1,0 +1,664 @@
+<!-- templates/profile.html -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 25%, #ff9ff3 50%, #54a0ff 75%, #5f27cd 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            padding: 50px 40px;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.1) 10px,
+                rgba(255, 255, 255, 0.1) 20px
+            );
+            animation: movePattern 20s linear infinite;
+        }
+
+        @keyframes movePattern {
+            0% { transform: translateX(-50px) translateY(-50px); }
+            100% { transform: translateX(50px) translateY(50px); }
+        }
+
+        .profile-section {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 56px;
+            font-weight: bold;
+            color: white;
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .avatar::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24, #ffd700);
+            z-index: -1;
+            animation: rotate 3s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .avatar:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .profile-info h2 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            margin-left: 15px;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .profile-info p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            margin-bottom: 10px;
+        }
+
+        .status-badges {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .status-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .edit-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 15px 35px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            margin-top: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .edit-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .content {
+            padding: 50px 40px;
+        }
+
+        .sections-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .section.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .section h3 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #ff6b6b;
+        }
+
+        .section h3 i {
+            color: #ff6b6b;
+            font-size: 1.4rem;
+        }
+
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .details-table tr {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            transition: background-color 0.2s ease;
+        }
+
+        .details-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .details-table tr:hover {
+            background-color: rgba(255, 107, 107, 0.05);
+        }
+
+        .details-table td {
+            padding: 18px 20px;
+            vertical-align: top;
+        }
+
+        .details-table td:first-child {
+            font-weight: 600;
+            color: #555;
+            width: 180px;
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        .details-table td:last-child {
+            color: #333;
+            background: white;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-dialog {
+            position: relative;
+            margin: 30px auto;
+            max-width: 600px;
+            animation: modalSlideIn 0.4s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-80px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-close:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-body {
+            padding: 35px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
+            background: white;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-footer {
+            padding: 25px 35px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 20px;
+            }
+
+            .header {
+                padding: 40px 20px;
+            }
+
+            .profile-info h2 {
+                font-size: 2.2rem;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .sections-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .section {
+                padding: 25px 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-dialog {
+                margin: 15px;
+            }
+
+            .status-badges {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="profile-section">
+                <div class="avatar">
+                    {% set name_parts = user.fullName.split() %}
+                    {% if name_parts|length == 1 %}
+                        {% set initials = name_parts[0][0] %}
+                    {% else %}
+                         {% set initials = name_parts[0][0] + name_parts[1][0] %}
+                    {% endif %}
+                    <span class="initials">{{ initials|upper }}</span>
+                </div>
+                <div class="profile-info">
+                    <h2>{{ user.fullName }} </h2>
+                    <p><i class="fas fa-envelope"></i>{{ user.email }}</p>
+                    <div class="status-badges">
+                        <span class="status-badge"><i class="fas fa-shield-alt"></i> Security Cleared</span>
+                        <span class="status-badge"><i class="fas fa-clock"></i> Online</span>
+                        <span class="status-badge"><i class="fas fa-certificate"></i> Verified</span>
+                    </div>
+                </div>
+                <button class="edit-btn" id="editProfileBtn">
+                    <i class="fas fa-user-edit"></i> Edit Profile
+                </button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="sections-grid">
+                <div class="section">
+                    <h3><i class="fas fa-user-shield"></i> User Information</h3>
+                    <table class="details-table">
+                        <tr>
+                            <td><i class="fas fa-user"></i> Full name:</td>
+                            <td id="fullName">{{ user.fullName }}</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-id-badge"></i> User ID:</td>
+                            <td id="adminId">User-001</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-envelope"></i> Email:</td>
+                            <td id="email">{{ user.email }}</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-phone"></i> Phone:</td>
+                            <td id="phone">{{ user.phone }}</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-location"></i> Address:</td>
+                            <td id="address">{{ user.address }}</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-calendar"></i> Registered:</td>
+                            <td id="joinDate">{{ user.registration_date }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Edit Your Profile</h3>
+                    <button type="button" class="btn-close" id="closeModalBtn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('update_profile') }}" id="editProfileForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="editEmail">Email:</label>
+                                <input type="email" class="form-control" id="editEmail" name="email" value="{{ user.email }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="editPhone">Phone:</label>
+                                <input type="tel" class="form-control" id="editPhone" name="phone" value="{{ user.phone }}" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label class="form-label" for="editAddress">Address:</label>
+                                <textarea class="form-control" id="editAddress" name="address" required>{{ user.address }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="currentPassword">Current Password:</label>
+                                <input type="password" class="form-control" id="currentPassword" name="current_password" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="newPassword">New Password (optional):</label>
+                                <input type="password" class="form-control" id="newPassword" name="new_password">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelEditBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveChangesBtn">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get modal elements
+        const editProfileBtn = document.getElementById('editProfileBtn');
+        const editProfileModal = document.getElementById('editProfileModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const editProfileForm = document.getElementById('editProfileForm');
+        const saveChangesBtn = document.getElementById('saveChangesBtn');
+
+        // Form inputs
+        const editEmail = document.getElementById('editEmail');
+        const editPhone = document.getElementById('editPhone');
+        const editAddress = document.getElementById('editAddress');
+        const currentPassword = document.getElementById('currentPassword');
+        const newPassword = document.getElementById('newPassword');
+
+        // Profile display elements
+        const emailDisplay = document.getElementById('email');
+        const phoneDisplay = document.getElementById('phone');
+        const addressDisplay = document.getElementById('address');
+
+        // Show modal function
+        function showModal() {
+            // Form is already pre-filled with Jinja values, no need to set them again
+            editProfileModal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        // Hide modal function
+        function hideModal() {
+            editProfileModal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restore scrolling
+            
+            // Clear password fields
+            currentPassword.value = '';
+            newPassword.value = '';
+        }
+
+        // Event listeners for opening/closing modal
+        editProfileBtn.addEventListener('click', showModal);
+        closeModalBtn.addEventListener('click', hideModal);
+        cancelEditBtn.addEventListener('click', hideModal);
+
+        // Close modal when clicking outside
+        editProfileModal.addEventListener('click', function(e) {
+            if (e.target === editProfileModal) {
+                hideModal();
+            }
+        });
+
+        // Handle save changes - if you want to submit to server, remove this and let form submit normally
+        saveChangesBtn.addEventListener('click', function(e) {
+            // If you want to submit to Flask route, comment out e.preventDefault() and the following code
+            e.preventDefault();
+            
+            // Client-side validation
+            if (!editEmail.value || !editPhone.value || !editAddress.value) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            if (!currentPassword.value) {
+                alert('Please enter your current password to save changes.');
+                return;
+            }
+
+            // For demo purposes - remove this in production
+            if (currentPassword.value !== 'demo123') {
+                alert('Current password is incorrect.');
+                return;
+            }
+
+            // Update display values (for demo)
+            emailDisplay.textContent = editEmail.value;
+            phoneDisplay.textContent = editPhone.value;
+            addressDisplay.textContent = editAddress.value;
+
+            // Show success message
+            alert('Profile updated successfully!');
+            
+            // Hide modal
+            hideModal();
+
+            // To submit to your Flask route instead, remove the above code and uncomment this:
+            // editProfileForm.submit();
+        });
+
+        // Handle form submission with Enter key
+        editProfileForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveChangesBtn.click();
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && editProfileModal.style.display === 'block') {
+                hideModal();
+            }
+        });
+    </script>
+</body>
+</html>

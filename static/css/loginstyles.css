@@ -1,0 +1,455 @@
+/* <style> */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            /* display: flex; */
+          
+            /* align-items: center; */
+            justify-content: center;
+            position: relative;
+            overflow: visible;
+        }
+
+        /* Animated background particles */
+        /* .bg-animation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        } */
+
+        
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 1; }
+            50% { transform: translateY(-100px) rotate(180deg); opacity: 0.5; }
+        }
+
+       
+        .auth-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            min-height: 500px; /* Changed from fixed height */
+            max-width: 420px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    /* Changed positioning for better responsiveness */
+            position: relative;
+            margin: 5vh auto; /* Center horizontally, add vertical margin */
+            z-index: 1;
+            animation: slideIn 0.8s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-header h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .auth-header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-control:focus {
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 67%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            justify-content: center;
+        }
+
+        .password-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+
+        .password-toggle:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        .password-toggle svg {
+            transition: all 0.3s ease;
+        }
+
+        .password-toggle:hover svg path,
+        .password-toggle:hover svg line,
+        .password-toggle:hover svg circle {
+            stroke: rgba(255, 255, 255, 1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .auth-footer p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .auth-footer a {
+            color: #ff8e8e;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .auth-footer a:hover {
+            color: #ff6b6b;
+            text-decoration: underline;
+        }
+
+        
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            color: #ffcccb;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .success-message {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            color: #90ee90;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        /* Responsive design */
+
+        
+/* Responsive breakpoints */
+
+/* Large Desktop (1200px and up) */
+@media (min-width: 1200px) {
+    .auth-container {
+        max-width: 480px;
+        padding: 50px;
+        margin: 10vh auto;
+    }
+    
+    .auth-header h1 {
+        font-size: 3rem;
+    }
+    
+    .form-control {
+        padding: 18px 25px;
+        font-size: 1.1rem;
+    }
+    
+    .btn-primary {
+        padding: 18px;
+        font-size: 1.2rem;
+    }
+}
+
+/* Desktop (992px to 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+    .auth-container {
+        max-width: 450px;
+        margin: 8vh auto;
+    }
+}
+
+/* Tablet (768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+    .auth-container {
+        max-width: 400px;
+        padding: 35px;
+        margin: 5vh auto;
+    }
+    
+    .auth-header h1 {
+        font-size: 2.2rem;
+    }
+    
+    .form-control {
+        padding: 14px 18px;
+    }
+}
+
+/* Small Tablet/Large Phone (481px to 767px) */
+@media (min-width: 481px) and (max-width: 767px) {
+    .auth-container {
+        max-width: 380px;
+        padding: 30px;
+        margin: 3vh auto;
+        border-radius: 16px;
+    }
+    
+    .auth-header h1 {
+        font-size: 2.1rem;
+    }
+    
+    .form-control {
+        padding: 13px 16px;
+    }
+    
+    .btn-primary {
+        padding: 14px;
+        font-size: 1.05rem;
+    }
+}
+
+/* Mobile (320px to 480px) - Enhanced */
+@media (max-width: 480px) {
+    body {
+        padding: 10px; /* Add body padding */
+    }
+    
+    .auth-container {
+        margin: 2vh auto;
+        padding: 25px 20px;
+        border-radius: 16px;
+        min-height: auto; /* Remove min-height on mobile */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .auth-header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+    }
+    
+    .auth-header p {
+        font-size: 0.9rem;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-control {
+        padding: 12px 15px;
+        font-size: 16px; /* Prevent zoom on iOS */
+        border-radius: 10px;
+    }
+    
+    .btn-primary {
+        padding: 14px;
+        font-size: 1rem;
+        border-radius: 10px;
+    }
+    
+    .password-toggle {
+        right: 12px;
+        padding: 6px;
+    }
+    
+    .password-toggle svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    /* Reduce backdrop blur for better performance on mobile */
+    .auth-container {
+        backdrop-filter: blur(10px);
+    }
+}
+
+/* Extra Small Mobile (below 320px) */
+@media (max-width: 319px) {
+    .auth-container {
+        padding: 20px 15px;
+        margin: 1vh auto;
+    }
+    
+    .auth-header h1 {
+        font-size: 1.6rem;
+    }
+    
+    .form-control {
+        padding: 10px 12px;
+    }
+    
+    .btn-primary {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .auth-container {
+        margin: 2vh auto;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .auth-header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+    }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .auth-container {
+        border-width: 0.5px; /* Thinner borders on high DPI */
+    }
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .auth-container {
+        animation: none;
+    }
+    
+    .form-control,
+    .btn-primary,
+    .password-toggle {
+        transition: none;
+    }
+    
+    .bg-animation {
+        display: none; /* Hide animations for users who prefer reduced motion */
+    }
+}
+
+/* Print styles */
+@media print {
+    .bg-animation,
+    .auth-container {
+        background: white !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+    }
+}
+
+        
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .form-control.valid {
+            border-color: #4ecdc4;
+        }
+/* </style> */

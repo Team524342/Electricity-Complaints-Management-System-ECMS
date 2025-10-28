@@ -1,0 +1,1416 @@
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Electricity Complaint Management</title>
+    
+     <link rel="stylesheet" href="static/bootstrap-5.3.6-dist/css/bootstrap.min.css">
+     <script src="static/bootstrap-5.3.6-dist/js/bootstrap.bundle.min.js"></script>
+     <link rel="stylesheet" href="static/fontawesome-free-6.7.2-web/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    <style>
+                * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .nav-buttons a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        .nav-buttons .btn {
+            margin-left: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .nav-buttons .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+    
+        .nav-buttons .btn a:hover {
+            color: white;
+        }
+        .nav-buttons .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border: none;
+        }
+        .nav-buttons .btn-primary:hover {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        .nav-buttons .btn-success {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            border: none;
+        }
+        
+        .filters-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            margin-bottom: 15px;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .container-fluid {
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            width: 280px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            margin-top: 0px;
+            margin-bottom: 20px;
+        }
+        /* Optional: Smooth scrolling behavior */
+        .sidebar::-webkit-scrollbar {
+        width: 6px;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        }
+        
+
+        .sidebar h2 {
+            color: #ecf0f1;
+            padding: 25px 20px;
+            border-bottom: 1px solid #34495e;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .nav-link {
+            color: #bdc3c7 !important;
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db !important;
+            border-left-color: #3498db;
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: rgba(52, 152, 219, 0.2);
+            color: #ececec !important;
+            border-left-color: #3498db;
+        }
+
+        .nav-link i {
+            margin-right: 12px;
+            font-size: 1.1rem;
+            width: 20px;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            min-height: 100vh;
+        }
+
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dashboard-header h4 {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .dashboard-header small {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .search-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            color: white;
+        }
+
+        .search-box::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-box:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+            color: white;
+        }
+
+        .stats-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .stats-card h6 {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .stats-card h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .stats-card .icon {
+            font-size: 2rem;
+            opacity: 0.7;
+            float: right;
+            margin-top: -10px;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid #e9ecef;
+            margin-bottom: 20px;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            color: #6c757d;
+            font-weight: 500;
+            padding: 12px 24px;
+            border-radius: 8px 8px 0 0;
+            margin-right: 5px;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: #3498db;
+            color: white;
+            border: none;
+        }
+
+        .complaints-table {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            overflow: hidden;
+            overflow-x: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            /* scrollbar-width: thin; */
+        }
+
+        .ctable {
+            width: 90%;
+            /* border-collapse: collapse; */
+            overflow-x: hidden;
+            overflow: hidden;
+            overflow-y: hidden;
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 20px 25px;
+        }
+
+        .table-header h4 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            border: none;
+            padding: 15px;
+            font-weight: 600;
+            color: #2c3e50;
+            overflow: hidden;
+        }
+
+        .table td {
+            padding: 15px;
+            border: none;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+            overflow: hidden;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(52, 152, 219, 0.05);
+            /* o */
+        }
+
+        .badge {
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            border-radius: 20px;
+        }
+
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8, #138496);
+            border: none;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            border: none;
+        }
+
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            border: none;
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .show-more-btn {
+            align-items: center;
+            margin: 10px;
+            margin-left: 45%;
+        }
+        .hidden-row {
+            display: none;
+        }
+       
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+
+        .menu-toggle {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        .filter-btn {
+            align-items: center;
+            bottom: 20px;
+            right: 20px;
+            background: #e7f3fc;
+            color: rgb(8, 8, 8);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+   
+    </style>
+    
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <h2><i class="fas fa-bolt"></i> Electricity Complaint Management</h2>
+            <nav>
+                <a href="#" class="nav-link active" onclick="showSection('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                 <!-- <a href="#" class="nav-link" onclick="showSection('user management')">
+                    <i class="fas fa-users"></i> USER Management
+                </a> -->
+              
+                <a href="#" class="nav-link" onclick="showSection('technicians')">
+                    <i class="fas fa-users"></i> Manage Technicians
+                </a>
+                <a href="#" class="nav-link" onclick="showSection('profile')">
+                    <i class="fas fa-user-circle"></i> Profile
+                </a>
+                <a href="#" class="nav-link" onclick="showSection('database')">
+                    <i class="fas fa-database"></i> Database
+                </a>
+                <a href="#" class="nav-link" onclick="showSection('management')">
+                    <i class="fas fa-cogs"></i> Database Management
+                </a>
+                <a href="#" class="nav-link" onclick="showSection('backup')">
+                    <i class="fas fa-shield-alt"></i> Backup Database
+                </a>
+                <a href="#" class="nav-link" onclick="showSection('settings')">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+                <a href="#" class="nav-link" onclick="showSection('transactions')">
+                    <i class="fas fa-credit-card"></i> Transactions
+                </a>
+                <a href="#" class="nav-link" onclick="showSection('export')">
+                    <i class="fas fa-file-excel"></i> Export to Excel
+                </a>
+                <a href="#" class="nav-link" onclick="showSection('reports')">
+                    <i class="fas fa-chart-bar"></i> Reports
+                </a>
+                <a href="{{ url_for('logout') }}" class="nav-link" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i> Menu
+            </button>
+            <div class="nav-buttons" >
+                <button id="btn HOme" class="btn btn-success" ><a href="/">HOme</a></button>
+                <button id="btn logout" class="btn btn-primary" ><a href="{{ url_for('logout') }}" onclick="logout()">Logout</a></button>
+            </div>
+
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="section active">
+                <!-- Header -->
+                <div class="dashboard-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4>Today's Statistics</h4>
+                            <small id="currentDateTime"></small>
+                        </div>
+                        <div class="d-flex">
+                            <input class="form-control search-box me-2" type="search" placeholder="Search here" aria-label="Search" style="width: 300px;">
+                            <button class="btn btn-outline-light" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6>Total Complaints</h6>
+                                    <h3 class="card-text text-primary">{{ stats.total }}</h3>
+                                    <!-- <h3 class="text-primary">245</h3> -->
+                                </div>
+                                <i class="fas fa-clipboard-list icon text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6>Open</h6>
+                                    <h3 class="card-text text-danger">{{ stats.open }}</h3>
+                                    <!-- <h3 class="text-warning">42</h3> -->
+                                </div>
+                                <i class="fas fa-exclamation-triangle icon text-warning"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6>In Progress</h6>
+                                    <!-- <h3 class="text-info">89</h3> -->
+                                     <h3 class="card-text text-success">{{ stats.in_progress }}</h3>
+                                </div>
+                                <i class="fas fa-sync-alt icon text-info"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6>Resolved</h6>
+                                    <h3 class="text-success">{{ stats.resolved }}</h3>
+                                </div>
+                                <i class="fas fa-check-circle icon text-success"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="chart-container">
+                    <ul class="nav nav-tabs" id="chartTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="bar-tab" data-bs-toggle="tab" data-bs-target="#barChartSection" type="button" role="tab">
+                                <i class="fas fa-chart-bar me-2"></i>Bar Chart
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pie-tab" data-bs-toggle="tab" data-bs-target="#pieChartSection" type="button" role="tab">
+                                <i class="fas fa-chart-pie me-2"></i>Pie Chart
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="trend-tab" data-bs-toggle="tab" data-bs-target="#trendChartSection" type="button" role="tab">
+                                <i class="fas fa-chart-line me-2"></i>Monthly Trends
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="chartTabContent">
+                        <div class="tab-pane fade show active" id="barChartSection" role="tabpanel">
+                            <canvas id="barChart" height="100"></canvas>
+                        </div>
+                        <div class="tab-pane fade" id="pieChartSection" role="tabpanel">
+                            <canvas id="pieChart" height="100"></canvas>
+                        </div>
+                        <div class="tab-pane fade" id="trendChartSection" role="tabpanel">
+                            <canvas id="trendChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-div" style="padding: 10px;">
+                    <button class="filter-btn" id="toggleFilterBtn" >
+                        <i class="fas fa-filter me-2">:</i>
+                    </button>
+                </div>
+                <!-- Filters Section -->
+                <div class="filters-section" id="filtersSection" style="display: none;">
+                    <h5 class="mb-3"><i class="fas fa-filter me-2"></i>Filters</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="filter-group">
+                                <label for="categoryFilter">Category</label>
+                                <select id="categoryFilter" class="form-select">
+                                    <option value="">All Categories</option>
+                                    <option value="Power Outage">Power Outage</option>
+                                    <option value="Voltage Issue">Voltage Issue</option>
+                                    <option value="Meter Problem">Meter Problem</option>
+                                    <option value="Billing Issue">Billing Issue</option>
+                                    <option value="Connection Problem">Connection Problem</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="filter-group">
+                                <label for="statusFilter">Status</label>
+                                <select id="statusFilter" class="form-select">
+                                    <option value="">All Status</option>
+                                    <option value="Open">Open</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Resolved">Resolved</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="filter-group">
+                                <label for="dateFromFilter">Date From</label>
+                                <input type="date" id="dateFromFilter" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="filter-group">
+                                <label for="dateToFilter">Date To</label>
+                                <input type="date" id="dateToFilter" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="filter-group">
+                                <label>&nbsp;</label>
+                                <div>
+                                    <button id="clearFiltersBtn" class="btn btn-secondary w-100">
+                                        <i class="fas fa-times me-1"></i>Clear Filters
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                            
+               
+    <!-- Complaints Table -->
+                <div class="complaints-table">
+                                <div class="table-header">
+                                    <h4><i class="fas fa-table me-2"></i>Live Complaint Status</h4>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Category</th>
+                                                <th>Location</th>
+                                                <th>Date</th>
+                                                <th>Status</th>
+                                                <th>Assigned To</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="ctable" id="complaintsTableBody">
+                                            {% for complaint in visible_rows %}
+                                            <tr>
+
+                                                <td>{{ complaint.complaint_id[:8] }}...</td>
+                                                <td>{{ complaint.category }}</td>
+                                                <td>{{ complaint.location }}</td>
+                                                <td>{{ complaint.submission_date }}</td>
+                                                <td>
+                                                    {% if complaint.status == 'Open' %}
+                                                        <span class="badge bg-warning">{{ complaint.status }}</span>
+                                                    {% elif complaint.status == 'In Progress' %}
+                                                        <span class="badge bg-info">{{ complaint.status }}</span>
+                                                    {% elif complaint.status == 'Resolved' %}
+                                                        <span class="badge bg-success">{{ complaint.status }}</span>
+                                                    {% else %}
+                                                        <span class="badge bg-secondary">{{ complaint.status }}</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if complaint.assigned_to %}
+                                                        {{ complaint.assigned_to }}
+                                                    {% else %}
+                                                        <em>Not assigned</em>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <a href="{{ url_for('view_complaint', complaint_id=complaint.complaint_id) }}" class="btn btn-sm btn-primary">View Log</a>
+                                            
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% for complaint in hidden_rows %}
+                                            <tr class="hidden-row">
+
+                                                <td>{{ complaint.complaint_id[:8] }}...</td>
+                                                <td>{{ complaint.category }}</td>
+                                                <td>{{ complaint.location }}</td>
+                                                <td>{{ complaint.submission_date }}</td>
+                                                <td>
+                                                    {% if complaint.status == 'Open' %}
+                                                        <span class="badge bg-warning">{{ complaint.status }}</span>
+                                                    {% elif complaint.status == 'In Progress' %}
+                                                        <span class="badge bg-info">{{ complaint.status }}</span>
+                                                    {% elif complaint.status == 'Resolved' %}
+                                                        <span class="badge bg-success">{{ complaint.status }}</span>
+                                                    {% else %}
+                                                        <span class="badge bg-secondary">{{ complaint.status }}</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if complaint.assigned_to %}
+                                                        {{ complaint.assigned_to }}
+                                                    {% else %}
+                                                        <em>Not assigned</em>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <a href="{{ url_for('view_complaint', complaint_id=complaint.complaint_id) }}" class="btn btn-sm btn-primary">View Log</a>
+                                            
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+
+                                            {% if not complaints %}
+                                                <tr>
+                                                    <td colspan="7" class="text-center">No complaints found</td>
+                                                </tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                {% if hidden_rows %}
+                                <div class="btn-container">
+                                    <button id="showMoreBtn" class="show-more-btn">Show More</button>
+                                </div>
+                                {% endif %}
+                                </div>
+                </div>
+            </div>
+
+            <!-- Other Sections (Placeholder content) -->
+            <div id="technicians" class="section">
+                <div class="dashboard-header">
+                    <h4><i class="fas fa-users me-2"></i>Manage Technicians</h4>
+                </div>
+                <div class="stats-card">
+
+                    <object type="text/html" data="{{( url_for('manage_technicians'))}}" width="100%" height="1000px">Technician List</object>
+                    
+                </div>
+                
+                <div class="stats-card">
+                       <div class="col-auto">
+                         <a href="{{ url_for('add_technician') }}" class="btn btn-primary">
+                           <i class="fas fa-plus-circle"></i> Add New Technician </a>
+                        </div>
+                </div>
+            </div>
+            <div id="profile" class="section">
+                <div class="dashboard-header">
+                    <h4><i class="fas fa-users me-2"></i>Manage Technicians</h4>
+                </div>
+                <div class="stats-card">
+                    <object type="text/html" data="{{( url_for('admin_profile'))}}" width="100%" height="1200px"></object>
+                </div>
+            </div>   
+            <div id="database" class="section">
+                <div class="dashboard-header">
+                    <h4><i class="fas fa-database me-2"></i>Database</h4>
+                </div>
+                <div class="stats-card">
+                    <object type="text/html" data="{{( url_for('excelto'))}}" width="100%" height="500px"></object>
+                </div>
+            </div>
+
+            <div id="management" class="section">
+                <div class="dashboard-header">
+                    <h4><i class="fas fa-cogs me-2"></i>Database Management</h4>
+                </div>
+                <div class="stats-card">
+                    <div class=" btn Database Management">
+                     <button style="margin: top 0 bottom 100;" onclick="loadPage(dataManagementUrl)" class="btn btn-primary me-2">Data Management</button>
+                    <button style="margin: top 0 bottom 100;" onclick="loadPage(generateReportsUrl)" class="btn btn-success me-2">Generate Reports</button>
+                    </div>
+                    <!-- Object Container -->
+                    <div style="margin: top 100;">
+                    <object id="pageViewer" type="text/html" width="100%" height="1200px" style="margin: top 50px;"></object>
+                    </div>
+                    <!-- <p>Database management tools coming soon...</p> -->
+                </div>
+                <div class="card-body">
+                   
+                </div>   
+            </div>
+
+            <div id="backup" class="section">
+                <div class="dashboard-header">
+                    <h4><i class="fas fa-shield-alt me-2"></i>Backup Database</h4>
+                </div>
+                <div class="stats-card">
+                    
+                     <a href="{{ url_for('backup_db') }}" class="btn btn-secondary me-2">Backup Database</a>
+                    <p>Database backup interface coming soon...</p>
+                </div>
+            </div>
+
+            <div id="settings" class="section">
+                <div class="dashboard-header">
+                    <h4><i class="fas fa-cog me-2"></i>Settings</h4>
+                </div>
+                <div class="stats-card">
+                    <p>Settings panel coming soon...</p>
+                </div>
+            </div>
+
+
+            
+            <div id="transactions" class="section">
+                <div class="dashboard-header">
+                    <h4><i class="fas fa-credit-card me-2"></i>Transactions</h4>
+                </div>
+                <div class="stats-card">
+                    <p>Transaction management coming soon...</p>
+                </div>
+            </div>
+
+            <div id="export" class="section">
+                <div class="dashboard-header">
+                    <h4><i class="fas fa-file-excel me-2"></i>Export to Excel</h4>
+                </div>
+                <div class="stats-card">
+                    <a href="{{ url_for('export_report_excel') }}" class="btn btn-info me-2">Export to Excel</a>
+                    <p>Export functionality coming soon...</p>
+                </div>
+            </div>
+
+            <div id="reports" class="section">
+                <div class="dashboard-header">
+                    <h4><i class="fas fa-chart-bar me-2"></i>Reports</h4>
+                </div>
+                <div class="stats-card">
+                    <object type="text/html" data="{{( url_for('reports'))}}" width="100%" height="1000px"></object>
+                    <!-- <a href="{{ url_for('reports') }}" class="btn btn-info me-2">Export to Excel</a>
+                    <p>Reports section coming soon...</p> -->
+                </div>
+            </div>
+        </div>
+    </div>
+     
+     
+<script>
+    
+  // Define the URLs (rendered from Flask using Jinja2)
+  const dataManagementUrl = "{{ url_for('admin_tools') }}";
+  const generateReportsUrl = "{{ url_for('generate_report') }}";
+
+  // Function to switch pages in the object tag
+  function loadPage(pageUrl) {
+    document.getElementById("pageViewer").data = pageUrl;
+  }
+
+  // Optionally, load one page by default
+//   window.onload = function() {
+//     loadPage(dataManagementUrl); // or generateReportsUrl
+//   };
+</script>
+     
+    
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterBtn = document.getElementById('toggleFilterBtn');
+        const filtersSection = document.getElementById('filtersSection');
+        filterBtn.addEventListener('click', function() {
+            if (filtersSection.style.display === 'none' || filtersSection.style.display === '') {
+                filtersSection.style.display = 'block';
+            } else {
+                filtersSection.style.display = 'none';
+            }
+        });
+    });
+    
+        // Initialize charts and functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            initializeCharts();
+        });
+
+        // Update current date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'short', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true
+            };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+
+        // Navigation functions
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked nav link
+            event.target.classList.add('active');
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Complaint management functions
+        function viewComplaint(complaintId) {
+            alert(`Viewing complaint: ${complaintId}`);
+            // In real implementation, this would open a detailed view
+        }
+
+        function assignTechnician(complaintId) {
+            // Show assign technician modal
+            const modal = new bootstrap.Modal(document.getElementById('assignTechnicianModal'));
+            modal.show();
+        }
+
+        function updateStatus(complaintId) {
+            // Show update status modal
+            const modal = new bootstrap.Modal(document.getElementById('updateStatusModal'));
+            modal.show();
+        }
+        
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                alert('Logging out...');
+                // In real implementation, this would redirect to login page
+            }
+        }
+
+        // Chart initialization
+        function initializeCharts() {
+            // Bar Chart
+            const barCtx = document.getElementById('barChart').getContext('2d');
+            new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Open', 'In Progress', 'Resolved'],
+                    datasets: [{
+                        label: 'Complaints',
+                        // eslint-disable-next-line
+                        data: [{{ stats.open }},{{ stats.in_progress }},{{ stats.resolved }}],
+                        backgroundColor: [
+                            'rgba(255, 193, 7, 0.8)',
+                            'rgba(23, 162, 184, 0.8)',
+                            'rgba(40, 167, 69, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 193, 7, 1)',
+                            'rgba(23, 162, 184, 1)',
+                            'rgba(40, 167, 69, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0,0,0,0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Pie Chart
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+            new Chart(pieCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Open', 'In Progress', 'Resolved'],
+                    datasets: [{
+                        // eslint-disable-next-line
+                        data: [{{ stats.open }},{{ stats.in_progress }},{{ stats.resolved }}],
+                        backgroundColor: [
+                            'rgba(255, 193, 7, 0.8)',
+                            'rgba(23, 162, 184, 0.8)',
+                            'rgba(40, 167, 69, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 193, 7, 1)',
+                            'rgba(23, 162, 184, 1)',
+                            'rgba(40, 167, 69, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Trend Chart
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Total Complaints',
+                        data: [65, 59, 80, 81, 56, 89],
+                        borderColor: 'rgba(52, 152, 219, 1)',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Resolved',
+                        data: [45, 49, 60, 71, 46, 79],
+                        borderColor: 'rgba(40, 167, 69, 1)',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0,0,0,0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('.search-box');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const searchTerm = e.target.value.toLowerCase();
+                    const tableRows = document.querySelectorAll('#complaintsTableBody tr');
+                    
+                    tableRows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        });
+
+        // Real-time stats update simulation
+        function updateStats() {
+            const stats = {
+                total: Math.floor(Math.random() * 50) + 200,
+                open: Math.floor(Math.random() * 20) + 30,
+                inProgress: Math.floor(Math.random() * 30) + 70,
+                resolved: Math.floor(Math.random() * 40) + 100
+            };
+
+            // Update stats cards (if you want real-time updates)
+            // This is just a simulation - in real app, you'd fetch from server
+        }
+
+        // Modal form submissions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Assign Technician Modal
+            const assignModal = document.getElementById('assignTechnicianModal');
+            if (assignModal) {
+                assignModal.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const technicianSelect = assignModal.querySelector('select');
+                    if (technicianSelect.value) {
+                        alert('Technician assigned successfully!');
+                        bootstrap.Modal.getInstance(assignModal).hide();
+                        // In real app, make API call to assign technician
+                    } else {
+                        alert('Please select a technician');
+                    }
+                });
+            }
+
+            // Update Status Modal
+            const updateModal = document.getElementById('updateStatusModal');
+            if (updateModal) {
+                updateModal.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const statusSelect = updateModal.querySelector('select');
+                    const notesTextarea = updateModal.querySelector('textarea');
+                    
+                    if (statusSelect.value) {
+                        alert('Status updated successfully!');
+                        bootstrap.Modal.getInstance(updateModal).hide();
+                        // In real app, make API call to update status
+                    } else {
+                        alert('Please select a status');
+                    }
+                });
+            }
+        });
+
+        // Notification system (placeholder)
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+        }
+
+        // Table row hover effects and interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            const tableRows = document.querySelectorAll('#complaintsTableBody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(0.98)';
+                    this.style.transition = 'transform 0.2s ease';
+                });
+                
+                row.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + K for search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.querySelector('.search-box').focus();
+            }
+            
+            // Escape to close modals
+            if (e.key === 'Escape') {
+                const openModals = document.querySelectorAll('.modal.show');
+                openModals.forEach(modal => {
+                    bootstrap.Modal.getInstance(modal).hide();
+                });
+            }
+        });
+
+        // Auto-refresh data simulation
+        setInterval(function() {
+            // In a real application, you would fetch new data from the server
+            // and update the table and charts accordingly
+            console.log('Auto-refreshing data...');
+        }, 30000); // Refresh every 30 seconds
+
+        // Export functionality placeholder
+        function exportToExcel() {
+            showNotification('Exporting data to Excel...', 'info');
+            // In real implementation, this would generate and download Excel file
+            setTimeout(() => {
+                showNotification('Export completed successfully!', 'success');
+            }, 2000);
+        }
+
+        // Print functionality
+        function printReport() {
+            window.print();
+        }
+
+        // Dark mode toggle (bonus feature)
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        // Load dark mode preference
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+        });
+    </script>
+    <script>
+    let isExpanded = false;
+        // Filter table rows
+       function filterTable() {
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const dateFromFilter = document.getElementById('dateFromFilter').value;
+            const dateToFilter = document.getElementById('dateToFilter').value;
+            
+            const allRows = document.querySelectorAll('#complaintsTableBody tr');
+            const hiddenRows = document.querySelectorAll('#complaintsTableBody .hidden-row');
+   
+            let visibleCount = 0;
+            let hasHiddenRows = false;
+            
+            allRows.forEach(row => {
+                // Skip the "No complaints found" row
+                if (row.cells.length < 7) return;
+                
+                const category = row.cells[1].textContent.trim();
+                const statusCell = row.cells[4];
+                const badgeElement = statusCell.querySelector('.badge');
+                const status = badgeElement ? badgeElement.textContent.trim() : statusCell.textContent.trim();
+
+                const date = row.cells[3].textContent.trim();
+                
+                let show = true;
+                
+                // Category filter
+                if (categoryFilter && category !== categoryFilter) {
+                    show = false;
+                }
+                
+                // Status filter
+                if (statusFilter && status !== statusFilter) {
+                    show = false;
+                }
+                
+                // Date range filter
+                if (dateFromFilter && date < dateFromFilter) {
+                    show = false;
+                }
+                if (dateToFilter && date > dateToFilter) {
+                    show = false;
+                }
+                
+                if (show) {
+                    if (!isExpanded && row.classList.contains('hidden-row')) {
+                        row.style.display = 'none';
+                        hasHiddenRows = true;
+                    } else {
+                        row.style.display = 'table-row';
+                        visibleCount++;
+                    }
+
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update show more button
+            const showMoreBtn = document.getElementById('showMoreBtn');
+            if (showMoreBtn) {
+                showMoreBtn.style.display = hasHiddenRows ? 'block' : 'none';
+            }
+            
+            // Show/hide no results message
+            const noComplaintsRow = document.querySelector('#complaintsTableBody tr td[colspan="7"]');
+            if (noComplaintsRow) {
+                noComplaintsRow.parentElement.style.display = visibleCount === 0 ? '' : 'none';
+            }
+            if (showMoreBtn) {
+                showMoreBtn.textContent = isExpanded ? 'Show Less' : 'Show More';
+            }
+
+        }
+
+        // Clear all filters
+       function clearFilters() {
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('dateFromFilter').value = '';
+            document.getElementById('dateToFilter').value = '';
+            
+            // Show all rows
+            const allRows = document.querySelectorAll('#complaintsTableBody tr');
+            const originalHiddenRows = document.querySelectorAll('#complaintsTableBody .hidden-row');
+            allRows.forEach(row => {
+                 if (row.cells.length >= 7) { // Only complaint rows
+                    if (row.classList.contains('hidden-row')) {
+                        // Reset hidden rows based on expansion state
+                        if (isExpanded) {
+                            row.style.display = 'table-row';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    } else {
+                        row.style.display = 'table-row'; // Show visible rows
+                    }
+                }
+            });
+            
+            // Reset show more button to original state
+            const showMoreBtn = document.getElementById('showMoreBtn');
+            const hiddenRows = document.querySelectorAll('#complaintsTableBody tr.hidden-row');
+            if (showMoreBtn && originalHiddenRows.length > 0) {
+                showMoreBtn.style.display = 'block';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listeners for filters
+            document.getElementById('categoryFilter').addEventListener('change', filterTable);
+            document.getElementById('statusFilter').addEventListener('change', filterTable);
+            document.getElementById('dateFromFilter').addEventListener('change', filterTable);
+            document.getElementById('dateToFilter').addEventListener('change', filterTable);
+            document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+            
+
+            showMoreBtn.addEventListener('click', function() {
+                const allRows = document.querySelectorAll('#complaintsTableBody tr');
+                let count = 0;
+
+                if (!isExpanded) {
+                    // Expand: Show all rows
+                    allRows.forEach(row => {
+                        if (row.cells.length >= 7) {
+                            row.style.display = 'table-row';
+                            row.classList.remove('hidden-row');
+                        }
+                    });
+                    this.textContent = 'Show Less';
+                    isExpanded = true;
+                } else {
+                    // Collapse: Only show first 5, hide the rest
+                    allRows.forEach(row => {
+                        if (row.cells.length >= 7) {
+                            if (count < 5) {
+                                row.style.display = 'table-row';
+                                row.classList.remove('hidden-row');
+                            } else {
+                                row.style.display = 'none';
+                                row.classList.add('hidden-row');
+                            }
+                            count++;
+                        }
+                    });
+                    this.textContent = 'Show More';
+                    isExpanded = false;
+                }
+            });
+
+        });
+
+    
+    </script>
+</body>

@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block title %}Add New Technician{% endblock %}
+
+{% block content %}
+<style>
+
+
+.form-control, .form-select, textarea {
+    color: #2c3e50;
+}
+
+.form-control:focus, .form-select:focus, textarea:focus {
+    color: #000;
+}
+
+ 
+</style>
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Add New Technician</h2>
+            <p class="text-muted">Create a new technician account</p>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('manage_technicians') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Technician List
+            </a>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Technician Information</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('add_technician') }}" method="POST">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="fullName" class="form-label">Full Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="fullName" name="fullName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="phone" name="phone" maxlength="10" required>
+                                <div class="form-text">10 digit mobile number without spaces or special characters</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="aadhar" class="form-label">Aadhar Number <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="aadhar" name="aadhar" maxlength="12" required>
+                                <div class="form-text">12 digit Aadhar number without spaces</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="confirm_password" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="specialization" class="form-label">Specialization</label>
+                            <select class="form-select" id="specialization" name="specialization">
+                                <option value="">-- Select Specialization --</option>
+                                <option value="Electrical Wiring">Electrical Wiring</option>
+                                <option value="Power Distribution">Power Distribution</option>
+                                <option value="Transformer Maintenance">Transformer Maintenance</option>
+                                <option value="Meter Installation">Meter Installation</option>
+                                <option value="General">General</option>
+                            </select>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Create Technician Account</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form validation
+    const form = document.querySelector('form');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm_password');
+    const phone = document.getElementById('phone');
+    const aadhar = document.getElementById('aadhar');
+    
+    form.addEventListener('submit', function(event) {
+        // Validate passwords match
+        if (password.value !== confirmPassword.value) {
+            alert('Passwords do not match');
+            event.preventDefault();
+            return false;
+        }
+        
+        // Validate phone is 10 digits
+        if (!/^\d{10}$/.test(phone.value)) {
+            alert('Phone number must be exactly 10 digits');
+            event.preventDefault();
+            return false;
+        }
+        
+        // Validate aadhar is 12 digits
+        if (!/^\d{12}$/.test(aadhar.value)) {
+            alert('Aadhar number must be exactly 12 digits');
+            event.preventDefault();
+            return false;
+        }
+        
+        return true;
+    });
+    
+    // Format input as user types
+    phone.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '').substring(0, 10);
+    });
+    
+    aadhar.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '').substring(0, 12);
+    });
+});
+</script>
+<script>
+    // Wait for the page to fully load
+    document.addEventListener('DOMContentLoaded', function () {
+        // Select all alerts
+        const alerts = document.querySelectorAll('.alert');
+
+        alerts.forEach(function(alert) {
+            // Auto-dismiss each alert after 3 seconds (3000ms)
+            setTimeout(function () {
+                alert.classList.remove('show');  // Bootstrap's fade out
+                alert.classList.add('fade');
+                alert.style.opacity = '0';
+
+                // Completely remove from DOM after fade-out
+                setTimeout(function () {
+                    alert.remove();
+                }, 500); // Wait 0.5s for fade-out animation
+            }, 3000); // Wait 3 seconds before starting to hide
+        });
+    });
+</script>
+{% endblock %}

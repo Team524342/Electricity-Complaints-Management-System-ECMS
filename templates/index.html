@@ -1,0 +1,378 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElectriCare - Complaint Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+    <!-- Welcome Section -->
+        <div class="card">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2 class="mb-3" style="color: var(--text-light); font-weight: 700;">
+                        <i class="fas fa-shield-alt" style="color: #4ecdc4;"></i>
+                        Welcome to ECMS
+                    </h2>
+                    <p style="color: rgba(255, 255, 255, 0.9); font-size: 1.1rem; line-height: 1.6;">
+                        Our advanced Electricity Complaint Management System helps you efficiently manage and track electrical issues. 
+                        Submit complaints, monitor progress, and get quick resolutions with our streamlined digital platform.
+                    </p>
+                    <div class="mt-4">
+                        <button class="btn btn-primary me-3" onclick="showLoginForm()">
+                            <a href="/register" class="fas fa-play" style="text-decoration: none; color: #ffff;"> Get Started</a>
+                        </button>
+                        <button class="btn btn-success" onclick="showFeatures()">
+                            <i class="fas fa-info-circle"></i> <a href="{{url_for('about')}}" style="text-decoration: none; color: #ffff;">Learn More</a>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <i class="fas fa-bolt rotate-icon" style="font-size: 8rem; color: #f093fb; opacity: 0.8;"></i>
+                </div>
+            </div>
+        </div>
+
+    <div class="container">
+        <!-- Tab Container -->
+        <div class="tab-container">
+            <div class="tabs">
+                <div class="tab active" onclick="openTab(event, 'User')">
+                    <i class="fas fa-user"></i> USER
+                </div>
+                <div class="tab" onclick="openTab(event, 'Technician')">
+                    <i class="fas fa-tools"></i> TECHNICIAN
+                </div>
+            </div>
+            <div id="User" class="tab-content active">
+                <h3 style="margin-bottom: 20px; color: #2d3748;">User Portal</h3>
+                <button type="button" class="login1">
+                    <a href="/login">Login</a>
+                </button>
+                <button type="button" class="register1">
+                    <a href="/register">Register</a>
+                </button>
+            </div>
+            <div id="Technician" class="tab-content">
+                <h3 style="margin-bottom: 20px; color: #2d3748;">Technician Portal</h3>
+                <button class="signup1">
+                    <a href="/technicianLogin">Technician Login</a>
+                </button>
+            </div>
+        </div>
+
+        <!-- Hero Section 2 -->
+        <div class="heroContainer">
+            <section class="hero1">
+                <div class="container1">
+                    <h2>Fast & Reliable Electricity Complaint Management</h2>
+                    <p>Report electricity issues, track complaint status, and get quick resolutions from our dedicated team.</p>
+                    <div class="cta-buttons">
+                        <a href="/login" class="btn btn-primary" onclick="showComplaintForm()">
+                            <i class="fas fa-exclamation-triangle"></i> Report an Issue
+                        </a>
+                        <a href="/login" class="btn btn-secondary" onclick="showTrackingForm()">
+                            <i class="fas fa-search"></i> Track Your Complaint
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Features Section -->
+        <section class="features fade-in">
+            <div class="container2">
+                <div class="section-title">
+                    <h2>Our Features</h2>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-file-alt"></i>
+                        <h3>Easy Complaint Filing</h3>
+                        <p>Submit electricity complaints quickly with our user-friendly form - no registration required for basic reporting.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-search"></i>
+                        <h3>Real-time Tracking</h3>
+                        <p>Track the status of your complaint in real-time and receive updates at every stage of resolution.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-bell"></i>
+                        <h3>Instant Notifications</h3>
+                        <p>Get notifications via SMS or email about complaint updates and estimated resolution time.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats fade-in">
+            <div class="container3">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <h3 class="counter" data-count="98">0</h3>
+                        <p>Resolution Rate</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="counter" data-count="24">0</h3>
+                        <p>Avg. Response Time (hrs)</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="counter" data-count="15000">0</h3>
+                        <p>Issues Resolved</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>4.8/5</h3>
+                        <p>Customer Satisfaction</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq fade-in" id="faq">
+            <div class="container6">
+                <div class="section-title">
+                    <h2>Frequently Asked Questions</h2>
+                </div>
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>How do I report an electricity issue?</span>
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <p>You can report an electricity issue by filling out our online complaint form on this website, calling our 24/7 helpline at 1-800-ELECTRIC, or using our mobile app available for both Android and iOS devices.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>How long does it take to resolve issues?</span>
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Our resolution time varies depending on the type of issue. For power outages, we aim to restore service within 4-6 hours. For billing issues, it may take 2-3 business days. For technical issues requiring site visits, we schedule appointments within 24-48 hours.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>How can I track my complaint status?</span>
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Once you submit a complaint, you'll receive a unique complaint ID via email or SMS. You can use this ID along with your email address to track the status of your complaint on our website or mobile app.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>What information do I need to provide when reporting an issue?</span>
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <p>To report an issue, please provide your full name, contact number, email address, service address, account number (if available), and a detailed description of the problem you're experiencing.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>Do I need to create an account to submit a complaint?</span>
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <p>No, you don't need to create an account to submit a basic complaint. However, creating an account allows you to access additional features like viewing your complaint history, receiving detailed updates, and communicating directly with our support team.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container5">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ElectriCare</h3>
+                    <p>We are dedicated to providing reliable electricity services and quick resolution to all your electricity-related concerns.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <a href="#quick-complaint" onclick="showComplaintForm()">Report Issue</a>
+                    <a href="#track-complaint" onclick="showTrackingForm()">Track Complaint</a>
+                    <a href="#faq">FAQ</a>
+                    <a href="{{url_for('about')}}">About Us</a>
+                    <a href="#services">Services</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-phone"></i> 1-800-ELECTRIC</p>
+                    <p><i class="fas fa-envelope"></i> support@electricare.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 123 Power Street, Energy City</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Working Hours</h3>
+                    <p>Monday - Friday: 8:00 AM - 8:00 PM</p>
+                    <p>Saturday: 9:00 AM - 5:00 PM</p>
+                    <p>Emergency Support: 24/7</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Tab functionality
+        function openTab(event, tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Accordion functionality
+        function toggleAccordion(element) {
+            const accordionItem = element.parentElement;
+            const isActive = accordionItem.classList.contains('active');
+            
+            // Close all accordion items
+            document.querySelectorAll('.accordion-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Open clicked item if it wasn't active
+            if (!isActive) {
+                accordionItem.classList.add('active');
+            }
+        }
+
+        // Counter animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.counter');
+            
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-count'));
+                const duration = 2000;
+                const increment = target / (duration / 16);
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.textContent = target + (counter.parentElement.querySelector('p').textContent.includes('Rate') ? '%' : '');
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.floor(current) + (counter.parentElement.querySelector('p').textContent.includes('Rate') ? '%' : '');
+                    }
+                }, 16);
+            });
+        }
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // Trigger counter animation when stats section is visible
+                    if (entry.target.classList.contains('stats')) {
+                        animateCounters();
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe fade-in elements
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Show complaint form (placeholder function)
+        function showComplaintForm() {
+            alert('Complaint form would open here. This would typically navigate to a form page or show a modal.');
+        }
+
+        // Show tracking form (placeholder function)
+        function showTrackingForm() {
+            alert('Tracking form would open here. This would typically navigate to a tracking page or show a modal.');
+        }
+
+        // Add loading animation to buttons
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // Add pulse animation to CTA buttons
+        setTimeout(() => {
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.classList.add('pulse');
+            });
+        }, 3000);
+
+        // Remove pulse after interaction
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.classList.remove('pulse');
+            });
+        });
+    </script>
+    <script>
+        // Wait for the page to fully load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Select all alerts
+            const alerts = document.querySelectorAll('.alert');
+
+            alerts.forEach(function(alert) {
+                // Auto-dismiss each alert after 3 seconds (3000ms)
+                setTimeout(function () {
+                    alert.classList.remove('show');  // Bootstrap's fade out
+                    alert.classList.add('fade');
+                    alert.style.opacity = '0';
+
+                    // Completely remove from DOM after fade-out
+                    setTimeout(function () {
+                        alert.remove();
+                    }, 500); // Wait 0.5s for fade-out animation
+                }, 3000); // Wait 3 seconds before starting to hide
+            });
+        });
+    </script>
+
+</body>
+{% endblock %}

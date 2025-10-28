@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technician Profile</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 40px;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .profile-section {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            border: 6px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .profile-info h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+
+        .profile-info p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .edit-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            margin-top: 20px;
+        }
+
+        .edit-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .section h3 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .details-table tr {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .details-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .details-table td {
+            padding: 15px 20px;
+            vertical-align: top;
+        }
+
+        .details-table td:first-child {
+            font-weight: 600;
+            color: #555;
+            width: 200px;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .details-table td:last-child {
+            color: #333;
+            background: white;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-dialog {
+            position: relative;
+            margin: 50px auto;
+            max-width: 500px;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-close:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .profile-info h2 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .details-table td {
+                padding: 12px 15px;
+            }
+
+            .details-table td:first-child {
+                width: auto;
+                display: block;
+                border-bottom: none;
+                padding-bottom: 5px;
+            }
+
+            .details-table td:last-child {
+                display: block;
+                padding-top: 5px;
+            }
+
+            .modal-dialog {
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="profile-section">
+                <div class="avatar">
+                    {% set name_parts = technician.fullName.split() %}
+                    {% if name_parts|length == 1 %}
+                        {% set initials = name_parts[0][0] %}
+                    {% else %}
+                         {% set initials = name_parts[0][0] + name_parts[1][0] %}
+                    {% endif %}
+                    <span class="initials">{{ initials|upper }}</span>
+                </div>
+                <div class="profile-info">
+                    <h2>{{technician.fullName}} <span class="badge verified"><i class="fas fa-check"></i> Verified</span></h2>
+                    <p><i class="fas fa-envelope"></i>{{technician.email}}</p>
+                </div>
+                <button class="edit-btn" id="editProfileBtn">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <h3><i class="fas fa-user-cog"></i> Technician Profile</h3>
+                <table class="details-table">
+                    <tr>
+                        <td><i class="fas fa-user"></i> Full name:</td>
+                        <td id="fullName">{{technician.fullName}}</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-id-card"></i> ID:</td>
+                        <td id="technicianId">{{technician.technician_id}}</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-envelope"></i> Email:</td>
+                        <td id="email">{{technician.email}}</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-phone"></i> Phone Number:</td>
+                        <td id="phone">{{technician.phone}}</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-map-marker-alt"></i> Address:</td>
+                        <td id="address">{{technician.address}}</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-briefcase"></i> Role:</td>
+                        <td id="role">{{technician.role}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Profile</h5>
+                    <button type="button" class="btn-close" id="closeModalBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="editProfileForm">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="editEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="editEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editPhone" class="form-label">Phone</label>
+                            <input type="text" class="form-control" id="editPhone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editAddress" class="form-label">Address</label>
+                            <textarea class="form-control" id="editAddress" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="currentPassword" class="form-label">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword" class="form-label">New Password (leave blank to keep current)</label>
+                            <input type="password" class="form-control" id="newPassword">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="cancelEditBtn">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get elements
+        const editProfileBtn = document.getElementById('editProfileBtn');
+        const editProfileModal = document.getElementById('editProfileModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const editProfileForm = document.getElementById('editProfileForm');
+
+        // Form inputs
+        const editEmail = document.getElementById('editEmail');
+        const editPhone = document.getElementById('editPhone');
+        const editAddress = document.getElementById('editAddress');
+        const currentPassword = document.getElementById('currentPassword');
+        const newPassword = document.getElementById('newPassword');
+
+        // Profile display elements
+        const emailDisplay = document.getElementById('email');
+        const phoneDisplay = document.getElementById('phone');
+        const addressDisplay = document.getElementById('address');
+
+        // Show modal function
+        function showModal() {
+            // Pre-fill form with current values
+            editEmail.value = emailDisplay.textContent;
+            editPhone.value = phoneDisplay.textContent;
+            editAddress.value = addressDisplay.textContent;
+            
+            editProfileModal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        // Hide modal function
+        function hideModal() {
+            editProfileModal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restore scrolling
+            
+            // Clear password fields
+            currentPassword.value = '';
+            newPassword.value = '';
+        }
+
+        // Event listeners
+        editProfileBtn.addEventListener('click', showModal);
+        closeModalBtn.addEventListener('click', hideModal);
+        cancelEditBtn.addEventListener('click', hideModal);
+
+        // Close modal when clicking outside
+        editProfileModal.addEventListener('click', function(e) {
+            if (e.target === editProfileModal) {
+                hideModal();
+            }
+        });
+
+        // Handle form submission
+        editProfileForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simulate form validation
+            if (!currentPassword.value) {
+                alert('Please enter your current password to save changes.');
+                return;
+            }
+
+            // Simulate password verification (in real app, this would be server-side)
+            if (currentPassword.value !== 'demo123') {
+                alert('Current password is incorrect.');
+                return;
+            }
+
+            // Update display values
+            emailDisplay.textContent = editEmail.value;
+            phoneDisplay.textContent = editPhone.value;
+            addressDisplay.textContent = editAddress.value;
+
+            // Show success message
+            alert('Profile updated successfully!');
+            
+            // Hide modal
+            hideModal();
+        });
+
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to table rows
+            const tableRows = document.querySelectorAll('.details-table tr');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = 'rgba(79, 172, 254, 0.05)';
+                });
+                
+                row.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                });
+            });
+
+            // Add floating animation to avatar
+            const avatar = document.querySelector('.avatar');
+            let floatDirection = 1;
+            
+            setInterval(() => {
+                const currentTransform = avatar.style.transform || '';
+                const translateY = floatDirection * 3;
+                avatar.style.transform = currentTransform.replace(/translateY\([^)]*\)/, '') + ` translateY(${translateY}px)`;
+                floatDirection *= -1;
+            }, 2000);
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Escape key to close modal
+            if (e.key === 'Escape' && editProfileModal.style.display === 'block') {
+                hideModal();
+            }
+            
+            // Ctrl/Cmd + E to edit profile
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e' && editProfileModal.style.display !== 'block') {
+                e.preventDefault();
+                showModal();
+            }
+        });
+    </script>
+</body>
+</html>

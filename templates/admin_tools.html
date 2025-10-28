@@ -1,0 +1,181 @@
+
+<head>
+    
+<style>
+    /* admin_tools.css */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    margin: 0;
+    padding: 0;
+}
+
+.admin-tools-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.admin-tools-container h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.tool-panel {
+    margin-bottom: 40px;
+}
+
+.tool-panel h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.tool-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.tool-card {
+    flex: 1 1 calc(50% - 20px);
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+}
+
+.tool-card:hover {
+    transform: translateY(-5px);
+}
+
+.tool-card h4 {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+    color: #222;
+}
+
+.tool-card p {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+input[type="file"] {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px;
+    width: 100%;
+    font-size: 0.9rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s, transform 0.2s;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: scale(1.03);
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    transform: scale(1.03);
+}
+
+.back-link {
+    text-align: center;
+    margin-top: 30px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .tool-card {
+        flex: 1 1 100%;
+    }
+}
+
+</style>
+</head>
+<body>
+    
+
+<div class="admin-tools-container">
+    <h2>Admin Tools</h2>
+    
+    <div class="tool-panel">
+        <h3>Database Management</h3>
+        <div class="tool-group">
+            <div class="tool-card">
+                <h4>Backup Database</h4>
+                <p>Create a backup of all complaint and user data.</p>
+                <a href="{{ url_for('backup_db') }}" class="btn btn-primary">Create Backup</a>
+            </div>
+            
+            <div class="tool-card">
+                <h4>Import Complaints</h4>
+                <p>Import complaints from an Excel file.</p>
+                <form method="POST" action="{{ url_for('import_complaints') }}" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input type="file" id="excel_file" name="excel_file" accept=".xlsx, .xls" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Import File</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tool-panel">
+        <h3>Report Generation</h3>
+        <div class="tool-group">
+            <div class="tool-card">
+                <h4>Complete Report</h4>
+                <p>Generate a comprehensive Excel report of all complaints.</p>
+                <a href="{{ url_for('export_report_excel') }}" class="btn btn-primary">Generate Excel Report</a>
+            </div>
+            
+            <div class="tool-card">
+                <h4>Web Report</h4>
+                <p>View an online summary report.</p>
+                <a href="{{ url_for('generate_report') }}" class="btn btn-primary">View Web Report</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="back-link">
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
+
+</body>
+    
+    
+    <!-- # In a real application, this would create the file
+    # For this example, we'll just return the content -->

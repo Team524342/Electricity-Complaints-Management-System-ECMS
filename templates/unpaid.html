@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<html>
+<head>
+    <title>Unpaid Bills</title>
+    
+   <style>
+    .btn{
+        background: #56f10d;
+    }
+   </style>
+</head>
+<body>
+
+    <h2>You have to pay your pending bills before proceeding.</h2>
+   
+        <a href="https://tgsouthernpower.org/electricitybillpayonline#" 
+        target="_main"
+        style="text-decoration: none;">
+            <button class="btn" onclick="payBills('${customerId}')">Pay Now</button>
+        </a>
+           <br><br>
+           <a style="background-color: #56f10d;" href="{{url_for('user_dashboard')}}"> Go Back to Dashboard</a>`;    
+
+</body>
+</html>
+{% endblock %}

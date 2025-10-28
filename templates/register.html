@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Modern Form</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+</head>
+<body>
+    <div class="container11">
+        <div class="auth-image">
+        <img src="{{ url_for('static', filename='images/register-side.png') }}" alt="Register Illustration">
+        </div>
+        <div class="auth-form" style="color: blue;">
+            <h1>Create Account</h1>
+            <form id="registerForm" method="POST" action="#" novalidate>
+                <div class="form-group">
+                    <label for="fullName" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="fullName" name="fullName" required>
+                    <div id="fullNameError" class="error-message">Please enter your full name</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="aadhar">Aadhar Card Number</label>
+                    <input type="text" id="aadhar" name="aadhar" maxlength="12" required>
+                    <div id="aadharError" class="error-message">Please enter a valid 12-digit Aadhar number</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                    <div id="emailError" class="error-message">Please enter a valid email address</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" maxlength="10" required>
+                    <div id="phoneError" class="error-message">Please enter a valid 10-digit phone number</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <textarea id="address" name="address" placeholder="Enter your complete address" required></textarea>
+                    <div id="addressError" class="error-message">Please enter your address</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                    <div class="strength-meter">
+                        <div class="strength-fill" id="strengthFill"></div>
+                    </div>
+                    <div id="passwordError" class="error-message">Password must be at least 8 characters long</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                    <div id="confirmPasswordError" class="error-message">Passwords do not match</div>
+                    <div id="passwordMatch" class="password-match">✓ Passwords match</div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <span id="btnText">Create Account</span>
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </button>
+            </form>
+            
+            <p class="login-link">Already have an account? <a href="#" onclick="showLoginForm()">Sign in here</a></p>
+        </div>
+    </div>
+
+    <script>
+        class FormValidator {
+            constructor() {
+                this.form = document.getElementById('registerForm');
+                this.fields = {
+                    fullName: document.getElementById('fullName'),
+                    aadhar: document.getElementById('aadhar'),
+                    email: document.getElementById('email'),
+                    phone: document.getElementById('phone'),
+                    address: document.getElementById('address'),
+                    password: document.getElementById('password'),
+                    confirm_password: document.getElementById('confirm_password')
+                };
+                this.errors = {};
+                this.init();
+            }
+
+            init() {
+                // Add event listeners
+                Object.keys(this.fields).forEach(field => {
+                    this.fields[field].addEventListener('blur', () => this.validateField(field));
+                    this.fields[field].addEventListener('input', () => this.clearError(field));
+                });
+
+                // Special handling for password
+                this.fields.password.addEventListener('input', () => this.checkPasswordStrength());
+                this.fields.confirm_password.addEventListener('input', () => this.checkPasswordMatch());
+
+                // Form submission
+                this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+
+                // Format inputs
+                this.fields.aadhar.addEventListener('input', (e) => this.formatAadhar(e));
+                this.fields.phone.addEventListener('input', (e) => this.formatPhone(e));
+            }
+
+            validateField(fieldName) {
+                const field = this.fields[fieldName];
+                const value = field.value.trim();
+                let isValid = true;
+
+                switch (fieldName) {
+                    case 'fullName':
+                        isValid = value.length >= 2;
+                        break;
+                    case 'aadhar':
+                        isValid = /^\d{12}$/.test(value);
+                        break;
+                    case 'email':
+                        isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+                        break;
+                    case 'phone':
+                        isValid = /^\d{10}$/.test(value);
+                        break;
+                    case 'address':
+                        isValid = value.length >= 10;
+                        break;
+                    case 'password':
+                        isValid = value.length >= 8;
+                        break;
+                    case 'confirm_password':
+                        isValid = value === this.fields.password.value;
+                        break;
+                }
+
+                if (isValid) {
+                    this.clearError(fieldName);
+                    field.classList.add('input-success');
+                } else {
+                    this.showError(fieldName);
+                }
+
+                return isValid;
+            }
+
+            showError(fieldName) {
+                const field = this.fields[fieldName];
+                const errorElement = document.getElementById(fieldName + 'Error');
+                
+                field.classList.add('input-error');
+                field.classList.remove('input-success');
+                errorElement.classList.add('show');
+                this.errors[fieldName] = true;
+            }
+
+            clearError(fieldName) {
+                const field = this.fields[fieldName];
+                const errorElement = document.getElementById(fieldName + 'Error');
+                
+                field.classList.remove('input-error');
+                errorElement.classList.remove('show');
+                delete this.errors[fieldName];
+            }
+
+            checkPasswordStrength() {
+                const password = this.fields.password.value;
+                const strengthFill = document.getElementById('strengthFill');
+                
+                let strength = 0;
+                if (password.length >= 8) strength++;
+                if (/[A-Z]/.test(password)) strength++;
+                if (/[a-z]/.test(password)) strength++;
+                if (/\d/.test(password)) strength++;
+                if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+                const percentage = (strength / 5) * 100;
+                strengthFill.style.width = percentage + '%';
+
+                if (strength <= 2) {
+                    strengthFill.className = 'strength-fill strength-weak';
+                } else if (strength <= 3) {
+                    strengthFill.className = 'strength-fill strength-medium';
+                } else {
+                    strengthFill.className = 'strength-fill strength-strong';
+                }
+            }
+
+            checkPasswordMatch() {
+                const password = this.fields.password.value;
+                const confirmPassword = this.fields.confirm_password.value;
+                const matchElement = document.getElementById('passwordMatch');
+
+                if (confirmPassword && password === confirmPassword) {
+                    matchElement.classList.add('show');
+                    this.clearError('confirm_password');
+                    this.fields.confirm_password.classList.add('input-success');
+                } else {
+                    matchElement.classList.remove('show');
+                    if (confirmPassword) {
+                        this.showError('confirm_password');
+                    }
+                }
+            }
+
+            formatAadhar(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 12) value = value.substring(0, 12);
+                e.target.value = value;
+            }
+
+            formatPhone(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 10) value = value.substring(0, 10);
+                e.target.value = value;
+            }
+
+            
+
+            clearAllErrors() {
+                Object.keys(this.fields).forEach(field => {
+                    this.clearError(field);
+                    this.fields[field].classList.remove('input-success');
+                });
+                document.getElementById('strengthFill').style.width = '0%';
+                document.getElementById('passwordMatch').classList.remove('show');
+            }
+
+            showNotification(message, type) {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 15px 20px;
+                    border-radius: 8px;
+                    color: white;
+                    font-weight: 600;
+                    z-index: 1000;
+                    animation: slideIn 0.3s ease-out;
+                    background: ${type === 'success' ? '#27ae60' : '#e74c3c'};
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                `;
+                notification.textContent = message;
+
+                document.body.appendChild(notification);
+
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease-in';
+                    setTimeout(() => notification.remove(), 300);
+                }, 3000);
+            }
+        }
+
+        // Initialize form validator when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new FormValidator();
+        });
+
+        // Add CSS animations for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Demo function for login link
+        function showLoginForm() {
+            alert('This would redirect to the login page. Replace with actual navigation logic.');
+        }
+    </script>
+</body>
+{% endblock %}

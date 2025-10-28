@@ -1,0 +1,121 @@
+
+<!-- templates/help.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="help-container">
+<h2>Help & Frequently Asked Questions</h2>
+
+<div class="accordion">
+<div class="accordion-item">
+    <div class="accordion-header">How do I submit a complaint?</div>
+    <div class="accordion-content">
+        <p>To submit a complaint:</p>
+        <ol>
+            <li>Login to your account</li>
+            <li>Click on "Submit Complaint" in the navigation menu</li>
+            <li>Fill out the complaint form with all required details</li>
+            <li>Upload any supporting documents if needed</li>
+            <li>Click the "Submit" button</li>
+        </ol>
+        <p>You will receive a confirmation once your complaint is successfully submitted.</p>
+    </div>
+</div>
+
+<div class="accordion-item">
+    <div class="accordion-header">How can I track the status of my complaint?</div>
+    <div class="accordion-content">
+        <p>You can track the status of your complaint by:</p>
+        <ol>
+            <li>Login to your account</li>
+            <li>Navigate to your dashboard</li>
+            <li>View the list of your complaints</li>
+            <li>Click on "View Details" for the specific complaint you want to track</li>
+        </ol>
+        <p>The status can be one of the following:</p>
+        <ul>
+            <li><strong>Open:</strong> Your complaint has been received but not yet processed</li>
+            <li><strong>In Progress:</strong> Your complaint is being addressed by our team</li>
+            <li><strong>Resolved:</strong> Your complaint has been resolved</li>
+        </ul>
+    </div>
+</div>
+
+<div class="accordion-item">
+    <div class="accordion-header">What if I forgot my password?</div>
+    <div class="accordion-content">
+        <p>If you forgot your password:</p>
+        <ol>
+            <li>Click on the "Login" link</li>
+            <li>Click on "Forgot Password"</li>
+            <li>Enter your registered email address</li>
+            <li>Follow the instructions sent to your email to reset your password</li>
+        </ol>
+        <p>If you continue to have issues, please contact our support team.</p>
+    </div>
+</div>
+
+<div class="accordion-item">
+    <div class="accordion-header">How long does it take to resolve a complaint?</div>
+    <div class="accordion-content">
+        <p>The time taken to resolve a complaint depends on its nature and complexity:</p>
+        <ul>
+            <li>Simple complaints such as billing queries may be resolved within 24-48 hours</li>
+            <li>Technical issues like voltage problems may take 2-3 days</li>
+            <li>Complex infrastructure issues might take up to a week or more</li>
+        </ul>
+        <p>Rest assured, our team works diligently to address every complaint as quickly as possible.</p>
+    </div>
+</div>
+
+<div class="accordion-item">
+    <div class="accordion-header">Can I update my complaint after submission?</div>
+    <div class="accordion-content">
+        <p>While you cannot directly edit a complaint after submission, you can:</p>
+        <ol>
+            <li>Submit a new complaint with updated information</li>
+            <li>Include the reference number of your original complaint</li>
+            <li>Mention that this is an update to a previous complaint</li>
+        </ol>
+        <p>Our team will link the new information to your original complaint.</p>
+    </div>
+</div>
+</div>
+
+<div class="contact-support">
+<h3>Need More Help?</h3>
+<p>If you couldn't find answers to your questions, please contact our support team:</p>
+<ul>
+    <li>Email: support@electricitycomplaints.com</li>
+    <li>Phone: 1-800-ELECTRIC (1-800-353-2874)</li>
+    <li>Hours: Monday to Friday, 9:00 AM to 5:00 PM</li>
+</ul>
+</div>
+
+<script>
+const accordionItems = document.querySelectorAll('.accordion-item');
+
+accordionItems.forEach(item => {
+    const header = item.querySelector('.accordion-header');
+    const content = item.querySelector('.accordion-content');
+    
+    header.addEventListener('click', () => {
+        // Toggle the current item
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+        header.classList.toggle('active');
+        
+        // Close other items
+        accordionItems.forEach(otherItem => {
+            if (otherItem !== item) {
+                otherItem.querySelector('.accordion-content').style.display = 'none';
+                otherItem.querySelector('.accordion-header').classList.remove('active');
+            }
+        });
+    });
+});
+</script>
+</div>
+{% endblock %}
+
+
+

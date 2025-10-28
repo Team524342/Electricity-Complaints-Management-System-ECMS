@@ -1,0 +1,212 @@
+<!-- templates/login.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+
+ <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Modern Auth</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loginstyles.css') }}">
+</head>
+<body>
+    <!-- <div class="bg-animation" id="bgAnimation"></div> -->
+    
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>Welcome Back</h1>
+            <p>Sign in to your account</p>
+        </div>
+
+        <div class="error-message" id="errorMessage">
+            {% if error_message %}
+                {{ error_message }}
+            {% endif %}
+        </div>
+        <div class="success-message" id="successMessage">
+            {% if success_message %}
+                {{ success_message }}
+            {% endif %}
+        </div>
+
+        <form id="loginForm"  method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+                <label for="username" class="form-label">Email or Aadhaar Number</label>
+                <input type="text" class="form-control" id="username" name="username" 
+                       placeholder="Enter your email or Aadhaar number"
+                       value="{{ request.form.username if request.form.username else '' }}"  required>
+            </div>
+            
+            <div class="form-group" >
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" 
+                       placeholder="Enter your password" required>
+                <button type="button" class="password-toggle" id="passwordToggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" 
+                        stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="1" y1="1" x2="23" y2="23" 
+                         stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <button type="submit" class=" btn btn-primary" id="loginBtn" >
+               login
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Don't have an account? <a href="/register" id="registerLink">Create one here</a></p>
+        </div>
+    </div> 
+
+     <script>
+        
+// Form validation
+        function validateForm() {
+            const username = document.getElementById('username');
+            const password = document.getElementById('password');
+            let isValid = true;
+
+            // Reset previous validation states
+            username.classList.remove('invalid', 'valid');
+            password.classList.remove('invalid', 'valid');
+
+            // Username validation
+            if (username.value.trim() === '') {
+                username.classList.add('invalid');
+                showError('Please enter your email or Aadhaar number');
+                isValid = false;
+            } else if (!isValidEmailOrAadhaar(username.value.trim())) {
+                username.classList.add('invalid');
+                showError('Please enter a valid email or 12-digit Aadhaar number');
+                isValid = false;
+            } else {
+                username.classList.add('valid');
+            }
+
+            // Password validation
+            if (password.value.length < 6) {
+                password.classList.add('invalid');
+                showError('Password must be at least 6 characters long');
+                isValid = false;
+            } else {
+                password.classList.add('valid');
+            }
+
+            return isValid;
+        }
+
+        // Validate email or Aadhaar format
+        function isValidEmailOrAadhaar(value) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const aadhaarRegex = /^\d{12}$/;
+            return emailRegex.test(value) || aadhaarRegex.test(value);
+        }
+        // Password toggle functionality
+
+        function initPasswordToggle() {
+        const passwordInput = document.getElementById('password');
+        const passwordToggle = document.getElementById('passwordToggle');
+
+        passwordToggle.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type');
+        if (type === 'password') {
+            // Show password - display open eye
+                passwordInput.type = 'text';
+                passwordToggle.innerHTML = `
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 4.5C7.5 4.5 3.73 7.61 2 12c1.73 4.39 5.5 7.5 10 7.5s8.27-3.11 10-7.5c-1.73-4.39-5.5-7.5-10-7.5z" 
+                          stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="12" r="3" 
+                            stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                `;
+                } else {
+            // Hide password - display closed eye
+                passwordInput.type = 'password';
+                passwordToggle.innerHTML = `
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" 
+                          stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="1" y1="1" x2="23" y2="23" 
+                          stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            `;
+                    }
+            });
+        }
+
+        
+        // Validate email or Aadhaar format
+        function isValidEmailOrAadhaar(value) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const aadhaarRegex = /^\d{12}$/;
+            return emailRegex.test(value) || aadhaarRegex.test(value);
+        }
+
+        // Show error message
+        function showError(message) {
+            // if (!message) return;
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            
+            successDiv.style.display = 'none';
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            // if (!message) return;
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            
+            errorDiv.style.display = 'none';
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // Initialize all functionality when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            initPasswordToggle();
+
+            // Show server-side error message if present
+            
+            // ignor this errors
+            {% if error_message %}
+                document.getElementById('errorMessage').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('errorMessage').style.display = 'none';
+                }, 5000);
+            {% endif %}
+
+            // Show server-side success message if present
+            {% if success_message %}
+                document.getElementById('successMessage').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('successMessage').style.display = 'none';
+                }, 3000);
+            {% endif %}
+
+            // Add subtle entrance animation delay
+            setTimeout(() => {
+                document.querySelector('.auth-container').style.transform = 'translateY(0) scale(1)';
+            }, 100);
+        });
+
+        
+    </script>
+</body>
+{% endblock %}
+
